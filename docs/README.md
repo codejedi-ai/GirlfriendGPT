@@ -27,27 +27,17 @@ This is an enhanced version of GirlfriendGPT that adds professional websocket su
 
 ### Quick Start with Websocket
 
-The easiest way to install GirlfriendGPT is via the shell installer:
-
 ```bash
-curl -fsSL https://openclaw.ai/install.sh | bash
-```
+# 1. Install dependencies
+pip install -r requirements.txt
 
-(or `bash scripts/install.sh` from a cloned copy)
-
-Once the virtual environment is created and dependencies are installed you can
-run the websocket server:
-
-```bash
+# 2. Start the websocket server
 python run_websocket.py --name "Luna" --port 8000
-```
 
-and then, in another terminal, use the CLI:
-
-```bash
-gfgpt chat          # Interactive chat
-gfgpt code "Python function for fibonacci"  # Generate code
-gfgpt ask "How do I structure a Python project?"  # Ask questions
+# 3. In another terminal, use the CLI
+companion chat          # Interactive chat
+companion code "Python function for fibonacci"  # Generate code
+companion ask "How do I structure a Python project?"  # Ask questions
 ```
 
 ### Setup CLI Tool
@@ -88,7 +78,7 @@ companion code "Python async web scraper"
 companion refactor myfile.py "add error handling and type hints"
 
 # Ask questions
-gfgpt ask --message "Best practices for Python projects?"
+companion ask --message "Best practices for Python projects?"
 
 # Check server health
 companion health --server ws://localhost:8000

@@ -1,0 +1,7 @@
+"""Entry point for GirlfriendGPT package."""
+
+import sys
+from src.cli import cli
+
+if __name__ == "__main__":
+    sys.exit(cli())

@@ -1,4 +1,20 @@
-steamship@git+https://github.com/steamship-core/python-client@ec/fix-youtube-import
-langchain==0.0.200
+# Core dependencies (development requirements)
+openai>=0.27.0
+
+# Web scraping
 scrapetube
 pytube
+
+# Websocket & HTTP
+fastapi>=0.104.0
+websockets>=12.0
+uvicorn>=0.24.0
+httpx>=0.25.0
+aiohttp>=3.9.0
+
+# CLI & Data
+click>=8.0.0
+pydantic>=2.0.0
+
+# Terminal UI
+textual>=0.40.0
