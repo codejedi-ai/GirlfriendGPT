@@ -16,6 +16,10 @@ class ConfigManager:
     CONFIG_FILE = CONFIG_DIR / "config.json"
     STATE_FILE = CONFIG_DIR / "state.json"
     LOGS_DIR = CONFIG_DIR / "logs"
+    MEDIA_DIR = CONFIG_DIR / "media"
+    MEDIA_IMAGES_DIR = MEDIA_DIR / "img"
+    MEDIA_VIDEOS_DIR = MEDIA_DIR / "video"
+    MEDIA_AUDIO_DIR = MEDIA_DIR / "audio"
     TEMPLATES_DIR = CONFIG_DIR / "templates"
     
     # Path to the configuration template in project source
@@ -25,9 +29,14 @@ class ConfigManager:
 
     @classmethod
     def ensure_config_dir(cls) -> Path:
-        """Ensure config directory exists."""
+        """Ensure config directory exists with all subdirectories."""
         cls.CONFIG_DIR.mkdir(parents=True, exist_ok=True)
         cls.LOGS_DIR.mkdir(parents=True, exist_ok=True)
+        cls.MEDIA_DIR.mkdir(parents=True, exist_ok=True)
+        cls.MEDIA_IMAGES_DIR.mkdir(parents=True, exist_ok=True)
+        cls.MEDIA_VIDEOS_DIR.mkdir(parents=True, exist_ok=True)
+        cls.MEDIA_AUDIO_DIR.mkdir(parents=True, exist_ok=True)
+        cls.TEMPLATES_DIR.mkdir(parents=True, exist_ok=True)
         return cls.CONFIG_DIR
 
     @classmethod
@@ -195,6 +204,29 @@ class ConfigManager:
     def get_source_templates_dir(cls) -> Path:
         """Get the source templates directory path."""
         return cls.SOURCE_TEMPLATES
+
+    @classmethod
+    def get_media_dir(cls, media_type: str = "img") -> Path:
+        """Get media directory path.
+        
+        Args:
+            media_type: Type of media ("img", "video", "audio")
+        
+        Returns:
+            Path to the appropriate media directory
+        """
+        if media_type == "video":
+            return cls.MEDIA_VIDEOS_DIR
+        elif media_type == "audio":
+            return cls.MEDIA_AUDIO_DIR
+        else:  # default to images
+            return cls.MEDIA_IMAGES_DIR
+
+    @classmethod
+    def get_log_file(cls, name: str = "gateway") -> Path:
+        """Get log file path."""
+        cls.ensure_config_dir()
+        return cls.LOGS_DIR / f"{name}.log"
 
 
 class ConfigWatcher:

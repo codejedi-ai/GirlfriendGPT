@@ -214,6 +214,17 @@ def run_gateway(port: int = 18789, host: str = "127.0.0.1"):
     config = ConfigManager.load_config()
     ConfigManager.save_config(config)
 
+    # Setup logging to file
+    log_file = ConfigManager.get_log_file("gateway")
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler(log_file),
+            logging.StreamHandler()
+        ]
+    )
+    
     # Get OpenAI config
     openai_config = config.get("model_provider", {}).get("openai", {})
     api_key = openai_config.get("api_key") or os.environ.get("OPENAI_API_KEY")
@@ -229,7 +240,8 @@ def run_gateway(port: int = 18789, host: str = "127.0.0.1"):
     print(f"   Agent: {config.get('name')}")
     print(f"   Server: {host}:{port}")
     print(f"   Model: {model}")
-    print(f"   Hot-reload: Enabled (~/.gfgpt/config.json)")
+    print(f"   Logs: {log_file}")
+    print(f"   Media: {ConfigManager.MEDIA_DIR}")
     print()
 
     # Create agent
