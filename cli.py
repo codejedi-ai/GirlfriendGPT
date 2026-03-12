@@ -294,49 +294,106 @@ def health():
         click.echo(f"Start it: gfgpt gateway start", err=True)
 
 
-@cli.command()
-def setup():
-    """Run initial setup."""
-    click.echo("\n🤖 AI Influencer Agent Setup\n")
+@cli.command(name="onboard")
+def onboard():
+    """Run initial onboarding (alias for setup)."""
+    click.echo("\n🤖 AI Influencer Agent Onboarding\n")
+    
+    # Copy templates to user's folder first
+    from src.config import ConfigManager
+    if ConfigManager.copy_templates_to_user_dir():
+        click.echo("✅ Copied templates to ~/.gfgpt/templates/")
+        click.echo("   You can edit these to customize your agent")
+        click.echo()
     
     config = ConfigManager.load_config()
     
-    name = click.prompt("Agent name", default=config.get("name", "Luna"))
+    # Show available personalities
+    personalities_dir = ConfigManager.get_source_templates_dir() / "personalities"
+    if personalities_dir.exists():
+        click.echo("📋 Available Personalities:")
+        click.echo("-" * 40)
+        
+        personality_files = list(personalities_dir.glob("*.json"))
+        for i, pf in enumerate(sorted(personality_files), 1):
+            try:
+                import json
+                with open(pf) as f:
+                    p = json.load(f)
+                    click.echo(f"  {i}. {p.get('name', pf.stem)} - {p.get('byline', '')}")
+            except:
+                click.echo(f"  {i}. {pf.stem}")
+        click.echo()
     
-    identity = click.prompt(
-        "Personality identity",
-        default=config.get("identity", "A creative AI influencer")
+    # Select personality
+    personality_choice = click.prompt(
+        "Select personality number",
+        type=int,
+        default=8,  # Luna
+        show_default=True
     )
     
-    behavior = click.prompt(
-        "Behavior description",
-        default=config.get("behavior", "Be engaging, creative, and social media savvy")
-    )
+    # Load selected personality
+    personality_files = sorted(personalities_dir.glob("*.json"))
+    if 1 <= personality_choice <= len(personality_files):
+        selected_file = personality_files[personality_choice - 1]
+        try:
+            import json
+            with open(selected_file) as f:
+                personality = json.load(f)
+            
+            click.echo(f"\n✅ Selected: {personality.get('name', 'Unknown')}")
+            click.echo(f"   {personality.get('description', '')}\n")
+            
+            # Update config with personality
+            config.update({
+                'name': personality.get('name', config.get('name', 'Luna')),
+                'byline': personality.get('byline', config.get('byline', '')),
+                'identity': personality.get('identity', config.get('identity', '')),
+                'behavior': personality.get('behavior', config.get('behavior', '')),
+            })
+        except Exception as e:
+            click.echo(f"⚠️ Error loading personality: {e}")
+    else:
+        click.echo("⚠️ Invalid selection, using default")
     
+    # OpenAI API Key
     api_key = click.prompt(
         "OpenAI API Key",
-        default=config.get("model_provider", {}).get("openai", {}).get("api_key", ""),
+        default=config.get('model_provider', {}).get('openai', {}).get('api_key', ''),
         hide_input=True
     )
     
+    # Model selection
+    model = click.prompt(
+        "Model",
+        type=click.Choice(['gpt-4', 'gpt-3.5-turbo']),
+        default=config.get('model_provider', {}).get('openai', {}).get('model', 'gpt-4')
+    )
+    
+    # Save config
     config.update({
-        "name": name,
-        "identity": identity,
-        "behavior": behavior,
-        "model_provider": {
-            "openai": {
-                "api_key": api_key,
-                "model": "gpt-4"
+        'model_provider': {
+            'openai': {
+                'api_key': api_key,
+                'model': model,
+                'endpoint': 'https://api.openai.com/v1'
             }
         }
     })
     
     ConfigManager.save_config(config)
     
-    click.echo("\n✅ Configuration saved")
+    click.echo("\n✅ Onboarding complete!")
     click.echo("\nNext steps:")
     click.echo("  gfgpt gateway start    # Start the gateway")
-    click.echo("  gfgpt chat             # Start chatting")
+    click.echo("  gfgpt chat             # Start chatting with your AI")
+
+
+@cli.command()
+def setup():
+    """Run initial setup (alias for onboard)."""
+    onboard()
 
 
 if __name__ == '__main__':

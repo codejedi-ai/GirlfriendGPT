@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import os
 import json
+from pathlib import Path
 from dataclasses import dataclass, field
 from typing import List, Optional, Any, Dict
 
@@ -17,6 +18,10 @@ try:
     from openai import OpenAI
 except ImportError:
     OpenAI = None
+
+
+# Get the templates directory
+TEMPLATES_DIR = Path(__file__).parent.parent / "templates"
 
 
 @dataclass
@@ -78,26 +83,54 @@ class SmolAgent:
             ContentCalendarTool(),
         ]
 
+    def _load_template(self) -> str:
+        """Load the system prompt template from file."""
+        template_path = TEMPLATES_DIR / "tools.md"
+        
+        if template_path.exists():
+            with open(template_path, 'r') as f:
+                return f.read()
+        else:
+            # Fallback to basic template if file not found
+            return self._get_fallback_template()
+
+    def _get_fallback_template(self) -> str:
+        """Return a fallback template if file is not found."""
+        return """# AI Influencer Agent
+
+You are {name}, {byline}.
+{identity}
+Behavior: {behavior}
+
+## Tools
+{tool_descriptions}
+
+## Instructions
+- Respond naturally and engage with the user
+- Use tools when user requests media creation or social media posting
+- After using a tool, explain what you did and offer further help
+- Be creative and think like a social media influencer
+"""
+
     def _build_system_prompt(self) -> str:
-        """Build the system prompt with tool descriptions."""
+        """Build the system prompt from template with config values."""
+        template = self._load_template()
+        
         tool_descriptions = "\n".join([
             f"- {tool.name}: {tool.human_description}"
             for tool in self.tools
         ])
-
-        return (
-            f"You are {self.config.name}, {self.config.byline}.\n"
-            f"{self.config.identity}\n\n"
-            f"Behavior: {self.config.behavior}\n\n"
-            f"Available Tools:\n{tool_descriptions}\n\n"
-            f"INSTRUCTIONS:\n"
-            f"- For normal conversation, respond naturally and engage with the user.\n"
-            f"- When the user asks to create media (images, videos, audio), use the appropriate tool.\n"
-            f"- When the user asks to post to social media, use the platform-specific tool.\n"
-            f"- When the user asks for content planning or captions, use the content writing tools.\n"
-            f"- After using a tool, explain what you did and offer to help further.\n"
-            f"- Be creative, engaging, and think like a social media influencer!\n"
+        
+        # Replace placeholders with actual values
+        system_prompt = template.format(
+            name=self.config.name,
+            byline=self.config.byline,
+            identity=self.config.identity,
+            behavior=self.config.behavior,
+            tool_descriptions=tool_descriptions,
         )
+        
+        return system_prompt
 
     def respond(self, user_message: str) -> str:
         """Generate a response from the LLM."""
