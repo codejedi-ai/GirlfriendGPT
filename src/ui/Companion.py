@@ -1,22 +1,34 @@
 import sys
 from pathlib import Path
+import json
 
 import streamlit as st
-from steamship.cli.create_instance import load_manifest
 
 sys.path.append(str((Path(__file__) / "..").resolve()))
 st.set_page_config(page_title="🎥->🤗 Youtube to Companion")
 from utils.data import get_companions, get_companion_attributes, add_resource
-from utils.utils import get_instance, to_snake
-from utils.ux import sidebar, get_api_key, show_response
+from utils.ux import sidebar, show_response, create_instance, get_instance, invoke_prompt
+
+CONFIG_FILE = Path.home() / ".gfgpt" / "config.json"
+
+
+def _load_config():
+    if CONFIG_FILE.exists():
+        with open(CONFIG_FILE, "r") as f:
+            return json.load(f)
+    return {}
+
+
+def _save_config(config):
+    CONFIG_FILE.parent.mkdir(parents=True, exist_ok=True)
+    with open(CONFIG_FILE, "w") as f:
+        json.dump(config, f, indent=2)
 
 # Start page
 st.title("🎥->🤗 Youtube to Companion")
 st.write("Create your AI companion and chat about your favorite youtube video's")
 
 sidebar()
-
-manifest = load_manifest()
 
 if not st.session_state.get("instance"):
 
@@ -67,31 +79,36 @@ if not st.session_state.get("instance"):
     youtube_video_url = st.text_input("Youtube Video URL")
 
     if st.button("🤗 Spin up your companion"):
-
-        st.session_state.instance = instance = get_instance(
-            to_snake(personality),
-            config={
+        existing = _load_config()
+        existing.update(
+            {
                 "name": personality,
                 "byline": byline,
                 "identity": identity,
                 "behavior": behavior,
-            },
+            }
+        )
+        _save_config(existing)
+
+        instance = create_instance(
+            {
+                "name": personality,
+                "byline": byline,
+                "identity": identity,
+                "behavior": behavior,
+            }
         )
 
         if youtube_video_url:
             with st.spinner("Companion is watching the video 👀..."):
-                add_resource(
-                    instance.invocation_url,
-                    str(instance.client.config.api_key),
-                    youtube_video_url,
-                )
+                add_resource(youtube_video_url)
 
         st.balloons()
         st.experimental_rerun()
 
 else:
     instance = st.session_state.instance
-    companion_name = instance.config["name"]
+    companion_name = instance["config"]["name"]
 
     if st.button("+ New bot"):
         st.session_state.instance = None
@@ -114,12 +131,10 @@ else:
             st.chat_message(msg["role"]).write(msg["content"])
 
     if prompt := st.chat_input():
-        get_api_key()
         st.session_state.messages.append({"role": "user", "content": prompt})
         st.chat_message("user").write(prompt)
         with st.chat_message("assistant"):
             with st.spinner("Thinking..."):
-                responses = instance.invoke("prompt", prompt=prompt)
-            for response in responses:
-                show_response(response)
-        st.session_state.messages.append({"role": "assistant", "content": responses})
+                response = invoke_prompt(instance, prompt)
+            show_response(response)
+        st.session_state.messages.append({"role": "assistant", "content": response})

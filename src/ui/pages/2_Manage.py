@@ -1,12 +1,9 @@
-import time
-
 import pandas as pd
 import streamlit as st
 from pytube import YouTube
-from steamship import File
 
-from utils.data import index_youtube_video
-from utils.ux import sidebar, get_instance
+from utils.data import index_youtube_video, get_indexed_resources
+from utils.ux import sidebar
 
 st.title("Manage your chatbot")
 
@@ -28,19 +25,17 @@ def _get_video_info(youtube_url: str):
     }
 
 
-def load_and_show_videos(instance):
-    files = File.query(instance.client, tag_filter_query='kind is "source" and samefile {kind is "status"}').files
+def load_and_show_videos():
+    resources = get_indexed_resources()
     documents = []
-    for document in files:
-        source_tag = [tag for tag in document.tags if tag.kind == "source"][0].name
-        status_tag = [tag for tag in document.tags if tag.kind == "status"][0].name
-        video_info = _get_video_info(source_tag)
+    for source_url in resources:
+        video_info = _get_video_info(source_url)
         documents.append(
             {
                 "Title": video_info.get("title"),
-                "source": source_tag,
+                "source": source_url,
                 "thumbnail_url": video_info.get("thumbnail_url"),
-                "Status": status_tag,
+                "Status": "indexed",
             }
         )
     df = pd.DataFrame(documents)
@@ -56,22 +51,16 @@ def load_and_show_videos(instance):
     return documents
 
 
-instance = get_instance()
-refresh_bar = st.progress(0, text="Time till refresh")
-
 table = st.empty()
-documents = []
-i = 0
 
 youtube_url = st.text_input("Youtube video url")
 if st.button("Add video"):
     index_youtube_video(youtube_url)
 
-while True:
-    refresh_bar.progress(i % 20 / 20, text="Time till refresh")
+if st.button("Refresh table"):
+    table.text("Loading videos...")
+    load_and_show_videos()
 
-    if i % 20 == 0:
-        table.text("Loading videos...")
-        load_and_show_videos(instance)
-    i += 1
-    time.sleep(1)
+# Initial load
+table.text("Loading videos...")
+load_and_show_videos()

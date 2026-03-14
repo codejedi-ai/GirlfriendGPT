@@ -5,41 +5,44 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Optional
 
-import requests
 import scrapetube
 import streamlit as st
-from steamship import PackageInstance
+
+RESOURCE_FILE = Path.home() / ".gfgpt" / "ui_resources.json"
 
 
-def add_resource(invocation_url: str, api_key: str, url: str):
+def _load_resources():
+    if RESOURCE_FILE.exists():
+        with open(RESOURCE_FILE, "r") as f:
+            return json.load(f)
+    return []
 
-    response = requests.post(
-        f"{invocation_url}index_url",
-        json={"url": url},
-        headers={"Authorization": f"bearer {api_key}"},
-    )
-    return response.text
+
+def _save_resources(resources):
+    RESOURCE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    with open(RESOURCE_FILE, "w") as f:
+        json.dump(resources, f, indent=2)
+
+
+def add_resource(url: str):
+    resources = _load_resources()
+    if url not in resources:
+        resources.append(url)
+        _save_resources(resources)
+        return "Added"
+    return "Already added"
 
 
 def index_youtube_channel(
     channel_url: str, offset: Optional[int] = 0, count: Optional[int] = 10
 ):
-    instance: PackageInstance = st.session_state.instance
-
     videos = scrapetube.get_channel(channel_url=channel_url)
 
     future_to_url = {}
     with ThreadPoolExecutor(max_workers=20) as executor:
         for video in itertools.islice(videos, offset, offset + count + 1):
             video_url = f"https://www.youtube.com/watch?v={video['videoId']}"
-            future_to_url[
-                executor.submit(
-                    add_resource,
-                    instance.invocation_url,
-                    instance.client.config.api_key,
-                    video_url,
-                )
-            ] = video_url
+            future_to_url[executor.submit(add_resource, video_url)] = video_url
 
     for ix, future in enumerate(concurrent.futures.as_completed(future_to_url)):
         url = future_to_url[future]
@@ -52,10 +55,7 @@ def index_youtube_channel(
 
 
 def index_youtube_video(youtube_url: str):
-    instance: PackageInstance = st.session_state.instance
-    data = add_resource(
-        instance.invocation_url, instance.client.config.api_key.get_secret_value(), youtube_url
-    )
+    data = add_resource(youtube_url)
 
     if "added" in data.lower():
         st.write(f"Added {youtube_url}")
@@ -63,11 +63,15 @@ def index_youtube_video(youtube_url: str):
         print("error", data)
 
 
+def get_indexed_resources():
+    return _load_resources()
+
+
 # Personalities are now stored as templates under the agent example. We
 # look relative to this file so both the UI and the example scripts can
 # access them regardless of where the repo is installed.
 COMPANION_DIR = (
-    Path(__file__) / ".." / ".." / ".." / "agent" / "templates" / "personalities"
+    Path(__file__) / ".." / ".." / ".." / "src" / "templates" / "personalities"
 ).resolve()
 
 
@@ -84,7 +88,8 @@ def get_companion_attributes(companion_name: str):
     return {
         "name": companion["name"],
         "byline": companion["byline"],
-        "identity": "\n".join(companion["identity"]),
-        "behavior": "\n".join(companion["behavior"]),
-        "profile_image": companion["profile_image"],
+        "identity": companion["identity"] if isinstance(companion["identity"], str) else "\n".join(companion["identity"]),
+        "behavior": companion["behavior"] if isinstance(companion["behavior"], str) else "\n".join(companion["behavior"]),
+        "profile_image": companion.get("profile_image", ""),
+        "description": companion.get("description", ""),
     }

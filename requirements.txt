@@ -4,6 +4,7 @@ openai>=0.27.0
 # Web scraping
 scrapetube
 pytube
+requests
 
 # Websocket & HTTP
 fastapi>=0.104.0
@@ -18,3 +19,6 @@ pydantic>=2.0.0
 
 # Terminal UI
 textual>=0.40.0
+
+# Web UI
+streamlit>=1.30.0
