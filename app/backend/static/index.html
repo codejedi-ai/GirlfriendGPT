@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Talk to Lena Van Der Meer</title>
+  <script src="https://cdn.jsdelivr.net/npm/livekit-client@2.9.1/dist/livekit-client.umd.min.js"></script>
+  <style>
+    :root {
+      --bg0: #1a1410;
+      --bg1: #2a2118;
+      --ink: #f3e8d8;
+      --muted: #b8a894;
+      --accent: #c4785a;
+      --line: rgba(243, 232, 216, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 0%, #3d2a22 0%, transparent 55%),
+        radial-gradient(ellipse 60% 40% at 90% 100%, #2a3540 0%, transparent 50%),
+        linear-gradient(160deg, var(--bg0), var(--bg1));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.25rem;
+    }
+    main {
+      width: min(28rem, 100%);
+      text-align: center;
+    }
+    h1 {
+      margin: 0 0 0.35rem;
+      font-size: clamp(2.4rem, 8vw, 3.4rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    p.lead {
+      margin: 0 0 2rem;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.45;
+    }
+    .actions {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    button {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: rgba(196, 120, 90, 0.18);
+      color: var(--ink);
+      font: inherit;
+      font-size: 1rem;
+      padding: 0.85rem 1.4rem;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.15s ease;
+    }
+    button:hover { background: rgba(196, 120, 90, 0.32); }
+    button:active { transform: scale(0.98); }
+    button.secondary {
+      background: transparent;
+    }
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .status {
+      margin-top: 1.5rem;
+      min-height: 1.5rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    .status.live { color: #9ec7a0; }
+    .status.err { color: #e8a090; }
+    .meter {
+      margin: 1.75rem auto 0;
+      width: 4.5rem;
+      height: 4.5rem;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      display: grid;
+      place-items: center;
+      transition: box-shadow 0.25s ease, transform 0.25s ease;
+    }
+    .meter.on {
+      box-shadow: 0 0 0 6px rgba(196, 120, 90, 0.15);
+      transform: scale(1.05);
+    }
+    .meter span {
+      width: 1.1rem;
+      height: 1.1rem;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.35;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .meter.on span {
+      opacity: 1;
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.25); }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Lena</h1>
+    <p class="lead">Talk with your companion. Allow the microphone, then start.</p>
+    <div class="actions">
+      <button id="startBtn" type="button">Start talking</button>
+      <button id="stopBtn" type="button" class="secondary" disabled>End</button>
+    </div>
+    <div class="meter" id="meter" aria-hidden="true"><span></span></div>
+    <p class="status" id="status">Ready</p>
+  </main>
+  <script>
+    const { Room, RoomEvent, Track } = LivekitClient;
+    const startBtn = document.getElementById("startBtn");
+    const stopBtn = document.getElementById("stopBtn");
+    const statusEl = document.getElementById("status");
+    const meter = document.getElementById("meter");
+
+    let room = null;
+
+    function setStatus(text, kind) {
+      statusEl.textContent = text;
+      statusEl.className = "status" + (kind ? " " + kind : "");
+    }
+
+    async function connect() {
+      startBtn.disabled = true;
+      setStatus("Getting token…");
+      try {
+        // 1) Frontend → backend: mint JWT only (backend does not join LiveKit).
+        const res = await fetch("/api/token", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ greeting_context: "web_session" }),
+        });
+        if (!res.ok) {
+          const detail = await res.text();
+          throw new Error(detail || res.statusText);
+        }
+        const data = await res.json();
+        room = new Room({ adaptiveStream: true, dynacast: true });
+        room.on(RoomEvent.TrackSubscribed, (track) => {
+          if (track.kind === Track.Kind.Audio) {
+            const el = track.attach();
+            el.autoplay = true;
+            el.playsInline = true;
+            el.setAttribute("playsinline", "true");
+            document.body.appendChild(el);
+            void el.play().catch(() => {
+              setStatus("Tap the page if audio is blocked by the browser");
+            });
+          }
+        });
+        room.on(RoomEvent.TrackUnsubscribed, (track) => {
+          track.detach().forEach((el) => el.remove());
+        });
+        room.on(RoomEvent.Disconnected, () => {
+          meter.classList.remove("on");
+          setStatus("Disconnected");
+          startBtn.disabled = false;
+          stopBtn.disabled = true;
+        });
+        // 2) Frontend → LiveKit SFU: browser is the LiveKit client.
+        setStatus("Connecting to LiveKit…");
+        await room.connect(data.url, data.token);
+        await room.localParticipant.setMicrophoneEnabled(true);
+        meter.classList.add("on");
+        stopBtn.disabled = false;
+        setStatus("Connected — speak with Lena", "live");
+      } catch (err) {
+        console.error(err);
+        setStatus(err.message || String(err), "err");
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+        meter.classList.remove("on");
+      }
+    }
+
+    async function disconnect() {
+      stopBtn.disabled = true;
+      if (room) {
+        await room.disconnect();
+        room = null;
+      }
+      meter.classList.remove("on");
+      startBtn.disabled = false;
+      setStatus("Ended");
+    }
+
+    startBtn.addEventListener("click", connect);
+    stopBtn.addEventListener("click", disconnect);
+  </script>
+</body>
+</html>

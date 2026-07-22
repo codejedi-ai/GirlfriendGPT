@@ -1,0 +1,22 @@
+{
+  "id": "report_adherence_intent",
+  "name": "report_adherence_intent",
+  "description": "Classify the user's medication reply (Taken/Refused/Delayed/Confused/Distress) and update caregiver alerts. Call this after every medication-related user answer.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "transcript": {
+        "type": "string",
+        "description": "Exact user words about their medication."
+      },
+      "medication_id": {
+        "type": "string",
+        "description": "Optional medication id when known.",
+        "default": ""
+      }
+    },
+    "required": ["transcript"]
+  },
+  "channels": ["voice", "cli"],
+  "handler": "ali.api.intent.classify"
+}

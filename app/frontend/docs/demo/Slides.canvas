@@ -1,0 +1,25 @@
+{
+	"nodes":[
+		{"id":"1c2d760d908c69cf","type":"file","file":"slides/02_problem.md","x":560,"y":-312,"width":940,"height":1012},
+		{"id":"3d1459d87a8a672e","type":"file","file":"slides/01_title_tagline.md","x":-360,"y":18,"width":680,"height":352},
+		{"id":"64c313d58eab6bec","type":"file","file":"slides/03_solution.md","x":1880,"y":-202,"width":760,"height":792},
+		{"id":"fdcb716a99a540f6","type":"file","file":"slides/22.md","x":1424,"y":1000,"width":1672,"height":853},
+		{"id":"41d360c6b19ad13b","type":"file","file":"slides/05_product.md","x":35,"y":1060,"width":1050,"height":733},
+		{"id":"f1b295586df665d1","x":-20,"y":2020,"width":1160,"height":900,"type":"file","file":"slides/06_business_model.md"},
+		{"id":"4e649218ec0cf458","x":1600,"y":2137,"width":700,"height":667,"type":"file","file":"slides/07_adoption.md"},
+		{"id":"1dc39021636f3a7e","x":2720,"y":1961,"width":1006,"height":1019,"type":"file","file":"slides/08_competition.md"},
+		{"id":"2f4736699c44aa64","x":1640,"y":3200,"width":1018,"height":580,"type":"file","file":"slides/09_team.md"},
+		{"id":"577bf4348256cc53","x":120,"y":3072,"width":962,"height":836,"type":"file","file":"slides/10_financials.md"}
+	],
+	"edges":[
+		{"id":"b5dad327b7416a9e","fromNode":"3d1459d87a8a672e","fromSide":"right","toNode":"1c2d760d908c69cf","toSide":"left"},
+		{"id":"cc20f6ead3d2b58b","fromNode":"1c2d760d908c69cf","fromSide":"right","toNode":"64c313d58eab6bec","toSide":"left"},
+		{"id":"3fcefa6c198740ff","fromNode":"64c313d58eab6bec","fromSide":"bottom","toNode":"fdcb716a99a540f6","toSide":"top"},
+		{"id":"2f81d967d8a4f2b1","fromNode":"fdcb716a99a540f6","fromSide":"left","toNode":"41d360c6b19ad13b","toSide":"right"},
+		{"id":"2e1636800ff9d021","fromNode":"41d360c6b19ad13b","fromSide":"bottom","toNode":"f1b295586df665d1","toSide":"top"},
+		{"id":"c7adcd7d1f918324","fromNode":"f1b295586df665d1","fromSide":"right","toNode":"4e649218ec0cf458","toSide":"left"},
+		{"id":"f7519da2f27300bf","fromNode":"4e649218ec0cf458","fromSide":"right","toNode":"1dc39021636f3a7e","toSide":"left"},
+		{"id":"1da3ac80a1cd16b4","fromNode":"1dc39021636f3a7e","fromSide":"bottom","toNode":"2f4736699c44aa64","toSide":"right"},
+		{"id":"6550e1e67c8026fd","fromNode":"2f4736699c44aa64","fromSide":"left","toNode":"577bf4348256cc53","toSide":"right"}
+	]
+}

@@ -1,0 +1,6 @@
+# Prefer the stack compose at app/:
+#   cd app && docker compose up -d
+#
+# This file includes it so `cd app/agent && docker compose up -d` still works.
+include:
+  - path: ../docker-compose.yml

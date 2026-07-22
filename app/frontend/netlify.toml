@@ -1,0 +1,11 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NPM_FLAGS = "--ignore-scripts=false"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -1,0 +1,22 @@
+FROM node:20-alpine AS build
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+
+# VITE_API_URL stays as /api — Nginx proxies it to the backend
+RUN npm run build
+
+# ── Nginx stage ───────────────────────────────────────────────────────────────
+FROM nginx:alpine
+
+# Copy built app
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Nginx config template — envsubst fills in $BACKEND_URL at container start
+COPY nginx.conf /etc/nginx/templates/default.conf.template
+
+EXPOSE 80

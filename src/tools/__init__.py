@@ -1,4 +1,5 @@
-"""Collection of custom tools.
+"""Tools for GirlfriendGPT - built-in and MCP tools."""
 
-Visit https://docs.steamship.com/api/steamship.agents.tools.html for an overview of all available tools.
-"""
+from .registry import ToolDef, register_tool, get_all_tools, execute_tool
+
+__all__ = ["ToolDef", "register_tool", "get_all_tools", "execute_tool"]

@@ -1,0 +1,50 @@
+# Runs GirlfriendGPT backend + voice-agent unit tests.
+name: GirlfriendGPT Voice Agent Tests
+
+on:
+  push:
+    paths:
+      - "app/agent/**"
+      - "app/backend/main.py"
+      - "app/backend/livekit_token.py"
+      - "app/backend/tests/test_livekit_token.py"
+      - "app/backend/pyproject.toml"
+      - ".github/workflows/girlfriendgpt-voice-agent.yml"
+  pull_request:
+    paths:
+      - "app/agent/**"
+      - "app/backend/main.py"
+      - "app/backend/livekit_token.py"
+      - "app/backend/tests/test_livekit_token.py"
+      - "app/backend/pyproject.toml"
+      - ".github/workflows/girlfriendgpt-voice-agent.yml"
+  workflow_dispatch:
+
+jobs:
+  backend-token:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app/backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+      - run: uv python install 3.11
+      - run: uv sync --extra dev
+      - run: uv run pytest tests/test_livekit_token.py -q
+
+  agent:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app/agent
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+      - run: uv python install 3.11
+      - run: uv sync --extra dev
+      - run: uv run pytest -q

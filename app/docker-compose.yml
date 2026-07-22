@@ -1,0 +1,60 @@
+# Local AI girlfriend stack: LiveKit + app/backend + app/frontend
+# Voice worker stays on the host: cd app/agent && uv run python voice_agent.py dev
+#
+#   cd app && docker compose up -d
+#   open http://127.0.0.1:5173
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  livekit:
+    image: livekit/livekit-server:v1.8.4
+    command: ["--config", "/etc/livekit.yaml"]
+    volumes:
+      - ./agent/livekit.yaml:/etc/livekit.yaml:ro
+    ports:
+      - "7880:7880"
+      - "7881:7881"
+      - "50000-50100:50000-50100/udp"
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      LIVEKIT_URL: ws://127.0.0.1:7880
+      LIVEKIT_API_KEY: devkey
+      LIVEKIT_API_SECRET: secret
+      LIVEKIT_AGENT_NAME: AI-LiveKit-Agent
+      GIRLFRIENDGPT_AGENT_ID: e11a0000-0000-4000-8000-000000000001
+      BACKEND_HOST: "0.0.0.0"
+      BACKEND_PORT: "8080"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - livekit
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.talk
+    environment:
+      VITE_BACKEND_PROXY: http://backend:8080
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    restart: unless-stopped

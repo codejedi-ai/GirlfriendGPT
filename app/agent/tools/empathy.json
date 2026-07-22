@@ -1,0 +1,22 @@
+{
+  "id": "empathy",
+  "name": "empathy",
+  "description": "Acknowledge the user's feelings briefly and warmly. Use when they share emotion or distress; does not replace conversation — returns a short coaching hint for the next reply.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "user_message": {
+        "type": "string",
+        "description": "What the user just said."
+      },
+      "emotion": {
+        "type": "string",
+        "description": "Optional emotion label (sad, lonely, stressed, happy, …).",
+        "default": ""
+      }
+    },
+    "required": ["user_message"]
+  },
+  "channels": ["voice", "cli"],
+  "handler": "girlfriendgpt.tools.empathy"
+}

@@ -1,0 +1,42 @@
+---
+description: GirlfriendGPT = local stack; producer (voice) → buffer → consumer (CLI)
+alwaysApply: true
+---
+
+# GirlfriendGPT = complete local stack + buffering channel
+
+**GirlfriendGPT** is the **complete local** product stack (local LLM/STT/TTS;
+Speaches/Ollama-style). Do **not** conflate with **AI-GF**, which uses
+**third-party** cloud providers (Rime, Google, Anthropic, etc.) for Galatea
+companions. ALI may orchestrate both over LiveKit; this repo’s agent JSON
+`packages` / `models.provider` stay **local**.
+
+**GirlfriendGPT** hosts two agent kinds and buffers between them:
+
+1. **Voice agent** (`app/agent/`) — LiveKit worker; **produces / populates** the queue.
+2. **CLI sub-agent** (`cli.py`, `src/`) — **consumes** from the queue.
+
+Pattern: **producer (voice) → buffer/queue → consumer (CLI)**.
+
+**ALI** owns LiveKit room/agent orchestration and control APIs. ALI does **not**
+own this internal buffer; clients talk to ALI for connect/tokens/panel.
+
+Canonical checkout: repo-root `GirlfriendGPT/`. Layout alias:
+`agents/GirlfriendGPT` → symlink to that tree (`ALI` `agent_package_path`:
+`../agents/GirlfriendGPT/app/agent`).
+
+## Ideal location (future)
+
+- Prefer `GirlfriendGPT/app/buffer/` when implementing.
+- Alternatives later: shared JSON queue files or Redis.
+- Do **not** build a full queue unless explicitly requested; keep this as architecture rule.
+
+## Related ownership
+
+- Voice worker / agent JSON / **local** providers → `app/agent/`
+- Agent JSON **must** include a non-empty `packages` array (persona contract; not assumed from pyproject alone); declare local-stack deps
+- `models.provider` = local (Speaches, Ollama, …) — not AI-GF cloud APIs
+- CLI companion features → `cli.py` + `src/`
+- Shared tool defs by id → repo-root `shared/tools/<id>.json`
+- LiveKit control plane → **ALI** (`ALI/app/backend`, `ALI/app/web`)
+- Third-party Galatea companions → **AI-GF** (`agents/AI-GF`), not this repo
