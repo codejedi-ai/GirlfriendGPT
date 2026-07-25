@@ -135,7 +135,7 @@ Behavior: {behavior}
     def _refresh_runtime_config(self):
         """Refresh mutable runtime config from disk before each invocation."""
         try:
-            from config import ConfigManager
+            from companion.config import ConfigManager
 
             latest = ConfigManager.load_config()
             openai_cfg = latest.get("model_provider", {}).get("openai", {})

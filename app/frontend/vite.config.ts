@@ -16,7 +16,7 @@ export default defineConfig({
     port: 5173,
     strictPort: true,
     proxy: {
-      '/api': { target: BACKEND, changeOrigin: true },
+      '/api': { target: BACKEND, changeOrigin: true, ws: true },
     },
   },
   preview: {
@@ -24,7 +24,7 @@ export default defineConfig({
     port: 5173,
     strictPort: true,
     proxy: {
-      '/api': { target: BACKEND, changeOrigin: true },
+      '/api': { target: BACKEND, changeOrigin: true, ws: true },
     },
   },
   resolve: {

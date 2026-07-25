@@ -16,6 +16,11 @@ interface VoiceTalkPaneProps {
   onClose: () => void
   companionName?: string
   agentId?: string
+  /** Agent-initiated call: start LiveKit as soon as the pane opens. */
+  autoStart?: boolean
+  /** reminder_call = companion check-up greeting. */
+  greetingContext?: string
+  onAutoStartConsumed?: () => void
 }
 
 /**
@@ -27,6 +32,9 @@ export function VoiceChatModal({
   onClose,
   companionName = 'Lena Van Der Meer',
   agentId,
+  autoStart = false,
+  greetingContext = 'web_session',
+  onAutoStartConsumed,
 }: VoiceTalkPaneProps) {
   const {
     status,
@@ -44,12 +52,13 @@ export function VoiceChatModal({
     enableSound,
     sendChat,
     setMicrophoneMuted,
-  } = useAgentTalkSession({ companionName, agentId })
+  } = useAgentTalkSession({ companionName, agentId, greetingContext })
 
   const voiceLevel = micMuted ? 0 : micLevel
 
   const logRef = useRef<HTMLDivElement>(null)
   const [draft, setDraft] = useState('')
+  const autoStartedRef = useRef(false)
 
   useEffect(() => {
     logRef.current?.scrollTo({ top: logRef.current.scrollHeight, behavior: 'smooth' })
@@ -59,7 +68,16 @@ export function VoiceChatModal({
     if (!open && live) {
       void stop()
     }
+    if (!open) autoStartedRef.current = false
   }, [open, live, stop])
+
+  // Agent voice-call via backend WebSocket → auto connect + mic.
+  useEffect(() => {
+    if (!open || !autoStart || live || busy || autoStartedRef.current) return
+    autoStartedRef.current = true
+    onAutoStartConsumed?.()
+    void start()
+  }, [open, autoStart, live, busy, start, onAutoStartConsumed])
 
   const handleClose = async () => {
     if (live || busy) await stop()

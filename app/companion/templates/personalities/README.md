@@ -37,7 +37,7 @@ Copy a personality to your config:
 
 ```bash
 # Copy personality to config
-cp src/templates/personalities/luna.json ~/.gfgpt/config.json
+cp app/companion/templates/personalities/luna.json ~/.gfgpt/config.json
 
 # Edit with your API keys
 nano ~/.gfgpt/config.json
@@ -46,11 +46,11 @@ nano ~/.gfgpt/config.json
 ### Programmatically
 
 ```python
-from src.config import ConfigManager
+from companion.config import ConfigManager
 import json
 
 # Load personality
-with open('src/templates/personalities/sandra.json') as f:
+with open('app/companion/templates/personalities/sandra.json') as f:
     personality = json.load(f)
 
 # Use personality config
@@ -132,7 +132,7 @@ To remove a personality:
 
 ```bash
 # Remove from templates
-rm src/templates/personalities/unwanted.json
+rm app/companion/templates/personalities/unwanted.json
 
 # Remove from user configs
 rm ~/.gfgpt/templates/personalities/unwanted.json
@@ -140,8 +140,8 @@ rm ~/.gfgpt/templates/personalities/unwanted.json
 
 ## Related Files
 
-- `src/templates/config.json` - Main config template
-- `src/templates/tools.md` - System prompt template
+- `app/companion/templates/config.json` - Main config template
+- `app/companion/templates/tools.md` - System prompt template
 - `~/.gfgpt/config.json` - Active configuration
 - `engineering_notebook/009_configuration_template.md` - Config docs
 

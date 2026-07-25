@@ -103,6 +103,13 @@ def sidebar() -> CompanionCard | None:
                 st.error(f"Backend unreachable: {e}")
 
         st.divider()
+        st.subheader("Check-up chron")
+        st.caption(
+            "Open **Check-up Chron** in the pages menu — Streamlit randomly "
+            "calls the backend so the companion wakes up and checks on the user."
+        )
+
+        st.divider()
         st.subheader("Text gateway (legacy)")
         host = st.text_input("Host", value=config.get("gateway_host", "127.0.0.1"))
         port = st.number_input(

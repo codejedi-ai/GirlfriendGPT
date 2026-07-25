@@ -1,23 +1,17 @@
-# Optional Streamlit companion UI (`app/streamlit`)
+# Chron + CLI sub-agent server (`app/streamlit`)
 
-Isolated from the default product stack (**GirlfriendGPT** Vite UI at `app/frontend`).
+**http://127.0.0.1:8501** — single companion-server page (no tabs):
 
-Left sidebar lists characters from:
+- CLI sub-agent WebSocket gateway (`app/companion`)
+- Random check-up chron → `POST /api/agent/reach`
 
-- `src/templates/personalities/` (Luna, Sandra, … — text)
-- `templates/` (Lena, Nia, medication_companion)
-- `app/agent/personas/` (live voice personas)
-
-**Voice** companions embed Vite Talk (`app/frontend` → `app/backend` → LiveKit → `app/agent`).
-
-**Text** companions keep the classic spin-up + gateway chat flow.
+Product Talk/Discover stays at **http://127.0.0.1:5173**.
 
 ```bash
-# From repo root (or from this directory):
 ./scripts/run_streamlit_ui.sh
 # → http://127.0.0.1:8501
-
-# Or:
-cd app/streamlit && uv sync && uv run streamlit run Companion.py \
-  --server.port 8501 --server.address 127.0.0.1
 ```
+
+Headless chron only: `./scripts/run_checkup_cron.sh`
+
+Leave backend `CHECKUP_ENABLED=0` so Streamlit owns the schedule.

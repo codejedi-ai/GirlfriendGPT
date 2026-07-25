@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaCamera, FaSave, FaTimes, FaPlus, FaCheck, FaImage, FaStar, FaRegStar, FaTrash } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi2";
 import { api } from "@/lib/api";
-import { useAuth } from "@/contexts/AuthContext";
+import { setCallerDisplayName } from "@/lib/talkToken";
 import { ImageSlideshow } from "@/components/ImageSlideshow";
 
 type ImageEntry = { id: number; url: string; active?: boolean };
@@ -52,7 +52,6 @@ const EMPTY_FORM: ProfileForm = {
 };
 
 export default function MyProfilePage() {
-  const { user } = useAuth();
   const [form, setForm] = useState<ProfileForm>(EMPTY_FORM);
   const [profileUuid, setProfileUuid] = useState<string | null>(null);
 
@@ -85,41 +84,55 @@ export default function MyProfilePage() {
   const bannerUrls = banners.map((b) => b.url);
 
   useEffect(() => {
-    if (!user) return;
     async function load() {
-      const [data, avatarList, bannerList, imageList] = await Promise.all([
-        api.getMyProfile(),
-        api.getMyAvatars(),
-        api.getMyBanners(),
-        api.getMyPersonalImages(),
-      ]);
-      if (data && data.display_name !== undefined) {
+      try {
+        const [data, avatarList, bannerList, imageList] = await Promise.all([
+          api.getMyProfile(),
+          api.getMyAvatars(),
+          api.getMyBanners(),
+          api.getMyPersonalImages(),
+        ]);
+        if (data && data.display_name !== undefined) {
+          setForm({
+            display_name: data.display_name || "",
+            age: data.age || 20,
+            gender: data.gender || "",
+            bio: data.bio || "",
+            location: data.location || "",
+            looking_for: data.looking_for || "",
+            interests: data.interests || [],
+          });
+          setProfileUuid(data.uuid || null);
+          setAvatarX(data.avatar_x ?? 50);
+          setAvatarY(data.avatar_y ?? 50);
+          if (data.display_name) setCallerDisplayName(String(data.display_name));
+          setBannerX(data.banner_x ?? 50);
+          setBannerY(data.banner_y ?? 50);
+          setHasProfile(true);
+        } else {
+          setForm({
+            ...EMPTY_FORM,
+            display_name: "Local",
+            bio: "Local GirlfriendGPT profile (no cloud account).",
+          });
+        }
+        setAvatars(avatarList);
+        setBanners(bannerList);
+        setPersonalImages(imageList);
+      } catch {
         setForm({
-          display_name: data.display_name || "",
-          age: data.age || 20,
-          gender: data.gender || "",
-          bio: data.bio || "",
-          location: data.location || "",
-          looking_for: data.looking_for || "",
-          interests: data.interests || [],
+          ...EMPTY_FORM,
+          display_name: "Local",
+          bio: "Local GirlfriendGPT profile (no cloud account).",
         });
-        setProfileUuid(data.uuid || null);
-        setAvatarX(data.avatar_x ?? 50);
-        setAvatarY(data.avatar_y ?? 50);
-        setBannerX(data.banner_x ?? 50);
-        setBannerY(data.banner_y ?? 50);
-        setHasProfile(true);
+      } finally {
+        setLoading(false);
       }
-      setAvatars(avatarList);
-      setBanners(bannerList);
-      setPersonalImages(imageList);
-      setLoading(false);
     }
     load();
-  }, [user]);
+  }, []);
 
   const handleSave = async () => {
-    if (!user) return;
     setError(null);
     if (!form.display_name.trim()) {
       setError("Display name is required");
@@ -146,6 +159,7 @@ export default function MyProfilePage() {
     } else {
       setHasProfile(true);
       setSaved(true);
+      setCallerDisplayName(form.display_name.trim());
       setTimeout(() => setSaved(false), 2500);
     }
   };

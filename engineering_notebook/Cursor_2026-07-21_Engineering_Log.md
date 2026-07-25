@@ -235,19 +235,81 @@ sequenceDiagram
   Note over VAD: new: 1.5s + 2 words required
 ```
 
-## Session: 21:35 - Persistent voice sessions + participant_id
+## Session: 22:06 - Local mode: no auth + agent reach WebSocket
 
 ### Thought Process & Regression Analysis
 
-- **Problem:** End → Start always minted a new `talk-*` room and re-dispatched the agent.
-- **Regression Opportunities:** `participant_id` on agent JSON; `voice_sessions.py` reuse/dispatch; 30m idle hard-end; FE `client_session_id`.
-- **Execution Strategy:** Tests via `uv run pytest` in `app/agent` and `app/backend`.
+- **Problem:** UI still had Django sign-in/up; agents had no way to page the local user.
+- **Regression Opportunities:** `AuthContext` local guest; `/login`→discover; `local_events.py` WS + `POST /api/agent/reach`; incoming banner in `AuthenticatedLayout`.
+- **Execution Strategy:** `uv run pytest tests/test_local_events.py`.
 
 ```mermaid
-flowchart TD
-  FE["Start Talking"] --> Token["POST /api/token"]
-  Token --> Check["Agent participant_id in room?"]
-  Check -->|yes| Reuse["Join token only"]
-  Check -->|no| Dispatch["RoomAgentDispatch"]
+sequenceDiagram
+  participant Agent
+  participant BE as app/backend
+  participant FE as Browser
+  Agent->>BE: POST /api/agent/reach
+  BE->>FE: WS /api/ws/events agent_reach
+  FE->>FE: Incoming banner Answer
 ```
 
+
+## Session: 22:13 - Front↔back WebSocket voice_call
+
+### Thought Process & Regression Analysis
+
+- **Problem:** Agent needs to initiate voice with the user while they are on the local UI; media stays on LiveKit, but invites need a reliable FE↔BE WebSocket.
+- **Regression Opportunities:** `local_events.py` voice_call/notify; `useBackendEventsSocket`; `AgentVoiceBridge` + `VoiceChatModal` autoStart; `ring_browser_for_voice` in `voice_agent.py`; `tests/test_local_events.py`, `tests/test_ring_browser.py`.
+- **Execution Strategy:** Tests executed via dedicated CI/CD Workflow / local `uv run pytest`.
+
+```mermaid
+sequenceDiagram
+  participant Agent as Voice worker
+  participant BE as app/backend
+  participant FE as Browser WS
+  participant LK as LiveKit
+  Agent->>BE: POST /api/agent/reach mode=voice_call
+  BE->>FE: WS /api/ws/events voice_call
+  FE->>FE: openTalk autoStart + /discover
+  FE->>BE: POST /api/token
+  FE->>LK: connect + mic
+```
+
+## Session: 22:17 - Companion check-up rings
+
+### Thought Process & Regression Analysis
+
+- **Problem:** WebSocket reach path needed for companions to *check up* on the user when they are idle on the local UI.
+- **Regression Opportunities:** `checkup.py` loop; `talk_state` on WS; `greeting_context=reminder_call`; FE autoStart; `tests/test_checkup.py`.
+- **Execution Strategy:** Tests executed via dedicated CI/CD Workflow / local `uv run pytest`.
+
+```mermaid
+sequenceDiagram
+  participant BE as checkup loop
+  participant FE as Browser
+  participant LK as LiveKit
+  BE->>FE: WS voice_call checking up
+  FE->>FE: openTalk reminder_call
+  FE->>LK: connect + mic
+  Note over FE,BE: talk_state live skips next rings
+```
+
+## Session: 22:19 - Streamlit chron server (random check-ups)
+
+### Thought Process & Regression Analysis
+
+- **Problem:** Check-ups should be driven by Streamlit as a chron server, not an exact backend timer; timing must be inexact.
+- **Regression Opportunities:** `utils/checkup_cron.py` random delay + jitter; `pages/1_Checkup_Cron.py`; backend `CHECKUP_ENABLED` default off; `tests/test_checkup_cron.py`.
+- **Execution Strategy:** Tests executed via dedicated CI/CD Workflow / local `uv run python -m unittest`.
+
+```mermaid
+sequenceDiagram
+  participant ST as Streamlit chron
+  participant BE as app/backend
+  participant FE as Vite WS
+  participant AG as Voice agent
+  ST->>ST: sleep random min-max ±jitter
+  ST->>BE: POST /api/agent/reach checkup
+  BE->>FE: WS voice_call
+  FE->>AG: LiveKit session + reminder_call greeting
+```

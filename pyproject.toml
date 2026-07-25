@@ -31,7 +31,10 @@ dependencies = [
 gfgpt = "cli:cli"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src"]
+packages = ["companion"]
+
+[tool.hatch.build.targets.wheel.sources]
+"app/companion" = "companion"
 
 [tool.black]
 line-length = 100

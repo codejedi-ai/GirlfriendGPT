@@ -13,10 +13,10 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-from src.agent.agent import Agent, Config
-from src.core.loop import AgentRunLoop
-from src.config import ConfigManager, ConfigWatcher
-from src.bus import MessageBus
+from companion.agent.agent import Agent, Config
+from companion.core.loop import AgentRunLoop
+from companion.config import ConfigManager, ConfigWatcher
+from companion.bus import MessageBus
 
 logger = logging.getLogger(__name__)
 

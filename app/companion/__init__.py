@@ -25,10 +25,10 @@ __author__ = "Enias Cailliau"
 __license__ = "MIT"
 
 # Re-export main components for easy access
-from src.config import ConfigManager
-from src.core import AgentRunLoop, AgentContext
-from src.tools import register_tool, get_all_tools, execute_tool
-from src.bus import MessageBus, InboundMessage, OutboundMessage
+from companion.config import ConfigManager
+from companion.core import AgentRunLoop, AgentContext
+from companion.tools import register_tool, get_all_tools, execute_tool
+from companion.bus import MessageBus, InboundMessage, OutboundMessage
 
 __all__ = [
     # Config

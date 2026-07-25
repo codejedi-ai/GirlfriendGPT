@@ -170,7 +170,7 @@ export default function LandingPage() {
               </p>
             </motion.div>
 
-            {/* Video column — portrait 9:16, constrained by viewport height */}
+            {/* Instagram reel — portrait 9:16 */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -179,19 +179,18 @@ export default function LandingPage() {
               className="flex justify-center w-full sm:w-auto sm:flex-shrink-0"
             >
               <div
-                className="relative rounded-2xl overflow-hidden border border-[#ff0080]/20 shadow-lg shadow-[#ff0080]/10"
-                style={{ height: "min(65vh, 520px)", aspectRatio: "9/16" }}
+                className="relative rounded-2xl overflow-hidden border border-[#ff0080]/20 shadow-lg shadow-[#ff0080]/10 bg-black"
+                style={{ height: "min(65vh, 520px)", aspectRatio: "9/16", width: "min(100%, calc(min(65vh, 520px) * 9 / 16))" }}
               >
-                <video
-                  controls
-                  playsInline
-                  className="w-full h-full object-cover"
-                >
-                  <source
-                    src="https://raw.githubusercontent.com/codejedi-ai/CXC2026_Vite_Frontend/main/docs/Waterloo%20Tech%20Week%20DSC%20AI%20Girlfriend%20Event%20OG%20Post.mp4"
-                    type="video/mp4"
-                  />
-                </video>
+                <iframe
+                  title="Instagram reel — Waterloo Tech Week DSC AI Companion"
+                  src="https://www.instagram.com/reel/DOMbvWogUCj/embed"
+                  className="absolute inset-0 w-full h-full border-0"
+                  allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                />
               </div>
             </motion.div>
 

@@ -22,9 +22,10 @@ class ConfigManager:
     MEDIA_AUDIO_DIR = MEDIA_DIR / "audio"
     TEMPLATES_DIR = CONFIG_DIR / "templates"
     
-    # Path to the configuration template in project source
-    PROJECT_ROOT = Path(__file__).parent.parent
-    SOURCE_TEMPLATES = PROJECT_ROOT / "src" / "templates"
+    # Package lives at app/companion/ — templates sit next to this config package.
+    PACKAGE_ROOT = Path(__file__).resolve().parents[1]  # app/companion
+    PROJECT_ROOT = PACKAGE_ROOT.parents[1]  # GirlfriendGPT repo root
+    SOURCE_TEMPLATES = PACKAGE_ROOT / "templates"
     CONFIG_TEMPLATE = SOURCE_TEMPLATES / "config.json"
 
     @classmethod
@@ -45,7 +46,7 @@ class ConfigManager:
         
         Priority:
         1. ~/.gfgpt/templates/config.json (user's template)
-        2. src/templates/config.json (source template)
+        2. app/companion/templates/config.json (source template)
         3. Hardcoded fallback
         """
         # First, try user's templates folder

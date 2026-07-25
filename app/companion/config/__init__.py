@@ -3,9 +3,12 @@
 from .schema import ConfigSchema
 from .loader import ConfigLoader
 from .defaults import DEFAULT_CONFIG
-from .watcher import ConfigWatcher
+from .manager import ConfigManager, ConfigWatcher
 
-# Backward compatibility - alias ConfigLoader as ConfigManager
-ConfigManager = ConfigLoader
-
-__all__ = ["ConfigSchema", "ConfigLoader", "DEFAULT_CONFIG", "ConfigManager", "ConfigWatcher"]
+__all__ = [
+    "ConfigSchema",
+    "ConfigLoader",
+    "DEFAULT_CONFIG",
+    "ConfigManager",
+    "ConfigWatcher",
+]

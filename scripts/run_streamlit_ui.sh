@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Optional Streamlit companion UI (isolated under app/streamlit).
-# Default product UI is Vite GirlfriendGPT: app/frontend (:5173).
+# Chron + CLI sub-agent server only (app/streamlit). Product UI is Vite :5173.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 STREAMLIT_DIR="${ROOT}/app/streamlit"
 cd "$STREAMLIT_DIR"
-echo "Streamlit UI → http://127.0.0.1:8501 (optional; default UI is app/frontend :5173)" >&2
+echo "Chron + sub-agent server → http://127.0.0.1:8501" >&2
+echo "Talk / Discover → http://127.0.0.1:5173" >&2
 export STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
 uv sync
 exec uv run streamlit run Companion.py \

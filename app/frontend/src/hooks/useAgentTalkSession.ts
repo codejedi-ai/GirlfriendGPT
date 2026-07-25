@@ -213,6 +213,8 @@ function attachLocalMicMeter(
 export type UseAgentTalkSessionOpts = {
   companionName?: string
   agentId?: string
+  /** reminder_call = companion check-up greeting templates. */
+  greetingContext?: string
 }
 
 /**
@@ -221,6 +223,7 @@ export type UseAgentTalkSessionOpts = {
 export function useAgentTalkSession(opts: UseAgentTalkSessionOpts = {}) {
   const companionName = opts.companionName?.trim() || 'Lena'
   const agentId = opts.agentId?.trim() || undefined
+  const greetingContext = opts.greetingContext?.trim() || 'web_session'
   const [status, setStatus] = useState('Ready')
   const [live, setLive] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -280,7 +283,7 @@ export function useAgentTalkSession(opts: UseAgentTalkSessionOpts = {}) {
       micCleanupRef.current = attachLocalMicMeter(micTrack, setMicLevel)
 
       const data = await fetchTalkToken({
-        greeting_context: 'web_session',
+        greeting_context: greetingContext,
         agent_id: agentId,
       })
       if (data.reused) {
@@ -406,7 +409,7 @@ export function useAgentTalkSession(opts: UseAgentTalkSessionOpts = {}) {
     } finally {
       setBusy(false)
     }
-  }, [busy, live, companionName, agentId])
+  }, [busy, live, companionName, agentId, greetingContext])
 
   const stop = useCallback(async () => {
     micCleanupRef.current?.()

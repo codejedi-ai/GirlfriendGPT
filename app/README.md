@@ -1,12 +1,14 @@
 # GirlfriendGPT local stack
 
-Self-contained AI girlfriend (no ALI). Three packages:
+Self-contained AI girlfriend (no ALI). Packages under `app/`:
 
 | Package | Path | Role |
 |---------|------|------|
 | **Frontend** | [`app/frontend`](frontend/) | **Vite** Talk UI (`npm run dev`, `:5173`) |
-| **Backend** | [`app/backend`](backend/) | Token API only — `POST /api/token` (`:8080`) |
-| **Agent** | [`app/agent`](agent/) | LiveKit voice worker + personas (joins rooms) |
+| **Backend** | [`app/backend`](backend/) | Token + reach API (`POST /api/token`, `:8080`) |
+| **Agent** | [`app/agent`](agent/) | LiveKit voice worker + personas |
+| **Companion** | [`app/companion`](companion/) | CLI text/WebSocket sub-agent (`gfgpt`) |
+| **Streamlit** | [`app/streamlit`](streamlit/) | Chron + CLI sub-agent server only (`:8501`) |
 
 ## Traffic (locked)
 

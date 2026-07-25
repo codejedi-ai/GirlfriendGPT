@@ -8,10 +8,10 @@
 
 ## CLI sub-agent
 
-- **Path:** `GirlfriendGPT/cli.py` + `GirlfriendGPT/src/`
+- **Path:** `GirlfriendGPT/cli.py` + `GirlfriendGPT/app/companion/`
 - **Role:** second agent kind ALI can orchestrate (text/websocket companion stack)
 - **Tools:** same shared catalog as voice — `shared/tools/<id>.json`; personas/CLI list ids only
-- **Loader:** `src/tools/json_catalog.py`
+- **Loader:** `app/companion/tools/json_catalog.py`
 
 ## Shared tools
 

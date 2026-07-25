@@ -6,7 +6,7 @@ from pathlib import Path
 
 def load_personality(name: str):
     """Load a personality by name."""
-    personalities_dir = Path(__file__).parent / "src" / "templates" / "personalities"
+    personalities_dir = Path(__file__).resolve().parents[1] / "templates" / "personalities"
     personality_file = personalities_dir / f"{name.lower().replace(' ', '_')}.json"
     
     if not personality_file.exists():

@@ -98,11 +98,11 @@ The WebSocket gateway provides these HTTP endpoints for management:
 GirlfriendGPT is built as a modular AI agent system with WebSocket-based communication:
 
 **Core Components:**
-- **Agent** (`src/agent/`) - AI logic powered by OpenAI GPT models
-- **Gateway** (`src/gateway/`) - WebSocket server (FastAPI + Uvicorn) for real-time bidirectional communication
-- **CLI** (`cli.py`) - Command-line interface for user interaction
-- **Config** (`src/config.py`) - Centralized configuration management with hot-reload support
-- **Tools** (`src/agent/tools/`) - Agent capabilities (content writing, image/video/audio generation)
+- **CLI companion** (`app/companion/`) - Text/WebSocket sub-agent (gateway, SmolAgent, tools)
+- **Voice agent** (`app/agent/`) - LiveKit worker + local STT/TTS/LLM
+- **CLI** (`cli.py`) - Command-line interface (`gfgpt`)
+- **Config** (`app/companion/config.py`) - Centralized configuration under `~/.gfgpt/`
+- **Tools** (`app/companion/agent/tools/`) - Content writing, image/video/audio generation
 
 **Communication Flow:**
 ```
@@ -121,21 +121,19 @@ GirlfriendGPT is built as a modular AI agent system with WebSocket-based communi
 ## Project Structure
 
 ```
-src/
-├── agent/              # AI agent implementation
-│   ├── agent.py       # Agent logic and message handling
-│   └── tools/         # Agent capabilities
-│       ├── audio_generation.py
-│       ├── content_writing.py
-│       ├── image_generation.py
-│       ├── social_media.py
-│       └── video_generation.py
-├── gateway/           # WebSocket server  
-│   └── server.py      # FastAPI app with WS endpoint
-├── config.py          # Configuration management
-└── ui/                # Legacy UI components (Streamlit)
+app/
+├── companion/         # CLI text sub-agent (was repo-root src/)
+│   ├── agent/         # SmolAgent + tools
+│   ├── gateway/       # WebSocket gateway
+│   ├── core/          # Run loop / memory
+│   ├── templates/     # Personality JSON
+│   └── config.py
+├── agent/             # LiveKit voice worker
+├── backend/           # Token + reach API
+├── frontend/          # Vite Talk UI
+└── streamlit/         # Check-up chron UI
 
-cli.py                 # CLI entry point
+cli.py                 # CLI entry point (gfgpt)
 requirements.txt       # Python dependencies
 
 templates/
@@ -196,7 +194,7 @@ curl -X POST http://localhost:18789/reload
 
 ## Custom Personalities
 
-Personality templates are stored in `src/templates/personalities/`. Each personality is a JSON file defining:
+Personality templates are stored in `app/companion/templates/personalities/`. Each personality is a JSON file defining:
 - Name, byline, identity, and behavior
 - Custom system prompts
 - Tool availability
@@ -233,20 +231,20 @@ See the example personalities (luna.json, alix_earle.json, etc.) for reference.
 Pull requests welcome! Areas for contribution:
 
 ### 🤖 Add a New Personality
-Personalities are JSON files in `src/templates/personalities/` that define:
+Personalities are JSON files in `app/companion/templates/personalities/` that define:
 - Name, byline, identity statement  
 - Behavior instructions for the agent
 - Tool availability
 - Voice settings (optional)
 
-1. Create a new JSON file in `src/templates/personalities/`
+1. Create a new JSON file in `app/companion/templates/personalities/`
 2. Define your personality (see luna.json as an example)
 3. Test with the CLI: `gfgpt chat`
 4. Submit PR with title: "{name} - {description}"
 
 ### 🛠️ Contribute Code
-- Add new tools in `src/agent/tools/`
-- Improve agent logic in `src/agent/agent.py`
+- Add new tools in `app/companion/agent/tools/`
+- Improve agent logic in `app/companion/agent/agent.py`
 - Enhance CLI commands in `cli.py`
 - Fix bugs and add features!
 

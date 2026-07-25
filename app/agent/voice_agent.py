@@ -23,6 +23,7 @@ import random
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 from typing import Any
@@ -186,6 +187,118 @@ async def _on_job_request(req: Any) -> None:
     )
     await accept(identity=identity, name=display, metadata=json.dumps(meta))
 
+def _backend_base() -> str:
+    """Local GirlfriendGPT API (token + agent reach WebSocket fan-out)."""
+    return _BACKEND_API or "http://127.0.0.1:8080"
+
+
+def ring_browser_for_voice(
+    *,
+    agent_id: str,
+    agent_name: str,
+    message: str = "wants to talk with you",
+    client_session_id: str | None = None,
+    auto_answer: bool = True,
+) -> dict[str, Any]:
+    """POST /api/agent/reach → browser WS opens talk + LiveKit (voice_call).
+
+    Use when the companion should initiate a voice conversation while the user
+    is on the local UI (not already in the LiveKit room).
+    """
+    payload = {
+        "agent_id": agent_id,
+        "agent_name": agent_name,
+        "message": message or "is checking up on you",
+        "mode": "voice_call",
+        "auto_answer": auto_answer,
+        "client_session_id": client_session_id,
+        "greeting_context": "reminder_call",
+        "purpose": "checkup",
+    }
+    req = urllib.request.Request(
+        f"{_backend_base()}/api/agent/reach",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=10.0) as resp:
+            body = json.loads(resp.read().decode("utf-8"))
+        logger.info(
+            "ring_browser agent=%s delivered=%s",
+            agent_id,
+            body.get("delivered"),
+        )
+        return body
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("ring_browser failed: %s", exc)
+        return {"ok": False, "error": str(exc)}
+
+
+def _fetch_caller_memory(client_session_id: str) -> dict[str, Any]:
+    """GET durable memory (name + written notes) for this browser session."""
+    csid = (client_session_id or "").strip()
+    if not csid:
+        return {}
+    req = urllib.request.Request(
+        f"{_backend_base()}/api/caller-memory/{urllib.parse.quote(csid, safe='')}",
+        method="GET",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=8.0) as resp:
+            body = json.loads(resp.read().decode("utf-8"))
+        mem = body.get("memory") if isinstance(body, dict) else None
+        return mem if isinstance(mem, dict) else {}
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("caller memory fetch failed: %s", exc)
+        return {}
+
+
+def _remember_caller_note(client_session_id: str, note: str) -> dict[str, Any]:
+    """Append a written-down fact about the caller (survives cold reconnects)."""
+    csid = (client_session_id or "").strip()
+    text = (note or "").strip()
+    if not csid or not text:
+        return {"ok": False, "error": "missing session or note"}
+    payload = {"append_note": text}
+    req = urllib.request.Request(
+        f"{_backend_base()}/api/caller-memory/{urllib.parse.quote(csid, safe='')}",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="PUT",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=8.0) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("caller memory write failed: %s", exc)
+        return {"ok": False, "error": str(exc)}
+
+
+def _format_caller_memory_block(mem: dict[str, Any], *, caller_name_hint: str = "") -> str:
+    name = str(mem.get("display_name") or caller_name_hint or "").strip()
+    summary = str(mem.get("summary") or "").strip()
+    notes = mem.get("notes") or []
+    if not isinstance(notes, list):
+        notes = []
+    lines = ["## Who you are talking to (persistent memory — do not forget)"]
+    if name:
+        lines.append(f"- Their name is {name}. Use it naturally.")
+    else:
+        lines.append("- Their name is not known yet; ask once warmly if needed.")
+    if summary:
+        lines.append(f"- Standing summary: {summary}")
+    if notes:
+        lines.append("- Things you have written down about them:")
+        for note in [str(n).strip() for n in notes if str(n).strip()][-12:]:
+            lines.append(f"  - {note}")
+    lines.append(
+        "Treat this block as true for this call. "
+        "If they share something important, call remember_about_user to write it down."
+    )
+    return "\n".join(lines)
+
+
 def _post_intent(transcript: str, medication_id: str = "") -> dict:
     if not _BACKEND_API:
         logger.warning("No adherence API configured — skipping intent classify")
@@ -225,8 +338,23 @@ _REPORT_ADHERENCE_DESCRIPTION = _load_adherence_description()
 class MedicationCheckAgent(Agent):
     """Medication-check companion; tool *schema* is shared/tools JSON (by id)."""
 
-    def __init__(self, instructions: str) -> None:
+    def __init__(self, instructions: str, *, client_session_id: str = "") -> None:
         super().__init__(instructions=instructions)
+        self._client_session_id = client_session_id
+
+    @function_tool(
+        description=(
+            "Write down something important about the person you are talking to "
+            "(name correction, preference, mood, fact). Survives future calls."
+        )
+    )
+    async def remember_about_user(self, context: RunContext, note: str) -> str:
+        result = await asyncio.to_thread(
+            _remember_caller_note, self._client_session_id, note
+        )
+        if result.get("ok") is False and result.get("error"):
+            return f"Could not save note: {result.get('error')}"
+        return "Saved. You will remember this on future calls."
 
     @function_tool(description=_REPORT_ADHERENCE_DESCRIPTION)
     async def report_adherence_intent(
@@ -263,14 +391,34 @@ class MedicationCheckAgent(Agent):
 class CompanionAgent(Agent):
     """Generic voice companion — no medication tools."""
 
-    def __init__(self, instructions: str) -> None:
+    def __init__(self, instructions: str, *, client_session_id: str = "") -> None:
         super().__init__(instructions=instructions)
+        self._client_session_id = client_session_id
+
+    @function_tool(
+        description=(
+            "Write down something important about the person you are talking to "
+            "(name correction, preference, mood, fact). Survives future calls."
+        )
+    )
+    async def remember_about_user(self, context: RunContext, note: str) -> str:
+        result = await asyncio.to_thread(
+            _remember_caller_note, self._client_session_id, note
+        )
+        if result.get("ok") is False and result.get("error"):
+            return f"Could not save note: {result.get('error')}"
+        return "Saved. You will remember this on future calls."
 
 
-def _build_agent_instance(persona: dict[str, Any], instructions: str) -> Agent:
+def _build_agent_instance(
+    persona: dict[str, Any],
+    instructions: str,
+    *,
+    client_session_id: str = "",
+) -> Agent:
     if should_attach_medication_tools(persona):
-        return MedicationCheckAgent(instructions)
-    return CompanionAgent(instructions)
+        return MedicationCheckAgent(instructions, client_session_id=client_session_id)
+    return CompanionAgent(instructions, client_session_id=client_session_id)
 
 
 def _log_pipeline_latency(ev: MetricsCollectedEvent) -> None:
@@ -514,6 +662,40 @@ async def entrypoint(ctx: JobContext) -> None:
     if not await _wait_for_patient_mic(ctx, patient):
         return
 
+    meta = _job_metadata(ctx)
+    client_session_id = str(meta.get("client_session_id") or "").strip()
+    caller_hint = str(meta.get("caller_name") or getattr(patient, "name", "") or "").strip()
+    if caller_hint.lower() in {"you", "user"}:
+        caller_hint = ""
+
+    mem = await asyncio.to_thread(_fetch_caller_memory, client_session_id) if client_session_id else {}
+    if caller_hint and not str(mem.get("display_name") or "").strip() and client_session_id:
+        try:
+            payload = {"display_name": caller_hint}
+            req = urllib.request.Request(
+                f"{_backend_base()}/api/caller-memory/{urllib.parse.quote(client_session_id, safe='')}",
+                data=json.dumps(payload).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+                method="PUT",
+            )
+            with urllib.request.urlopen(req, timeout=8.0) as resp:
+                body = json.loads(resp.read().decode("utf-8"))
+            mem = body.get("memory") if isinstance(body, dict) else mem
+            if not isinstance(mem, dict):
+                mem = {}
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("seed caller name failed: %s", exc)
+
+    memory_block = _format_caller_memory_block(mem or {}, caller_name_hint=caller_hint)
+    base_instructions = str(persona.get("instructions") or "")
+    instructions = f"{base_instructions.rstrip()}\n\n{memory_block}\n"
+    logger.info(
+        "Caller memory session=%s name=%s notes=%d",
+        client_session_id[:12] if client_session_id else "-",
+        (mem or {}).get("display_name") or caller_hint or "?",
+        len((mem or {}).get("notes") or []),
+    )
+
     session = AgentSession(
         vad=build_vad_from_agent(persona),
         stt=build_stt_from_agent(persona),
@@ -532,12 +714,15 @@ async def entrypoint(ctx: JobContext) -> None:
     session.on("agent_state_changed", watchdog.on_agent_state_changed)
     session.on("user_state_changed", watchdog.on_user_state_changed)
 
-    instructions = str(persona.get("instructions") or "")
     # Bind audio to the human before greeting. close_on_disconnect=False so brief
     # browser ICE reconnects do not kill the session (that looked like "deaf").
+    # Short-term memory: soft reconnect reuses this AgentSession (no new entrypoint).
+    # Long-term memory: instructions above + remember_about_user writes to backend.
     await session.start(
         room=ctx.room,
-        agent=_build_agent_instance(persona, instructions),
+        agent=_build_agent_instance(
+            persona, instructions, client_session_id=client_session_id
+        ),
         room_input_options=RoomInputOptions(
             audio_enabled=True,
             text_enabled=True,
@@ -553,14 +738,16 @@ async def entrypoint(ctx: JobContext) -> None:
 
     session_cfg = persona.get("session") or {}
     should_greet = bool(session_cfg.get("greet_on_start", True))
-    meta = _job_metadata(ctx)
     meta_ctx = str(meta.get("greeting_context") or os.getenv("GREETING_CONTEXT") or "").strip()
     if meta_ctx:
         greeting_context = meta_ctx
         if greeting_context == "web_session":
             user_input = "(The user has just connected for a voice conversation.)"
         elif greeting_context == "reminder_call":
-            user_input = "(The user has just connected for their scheduled medication check-in.)"
+            user_input = (
+                "(The companion is checking up on the user. Greet warmly, "
+                "ask how they are feeling, and keep them company.)"
+            )
         else:
             user_input = "(The user has just connected for a voice conversation.)"
     elif should_attach_medication_tools(persona):

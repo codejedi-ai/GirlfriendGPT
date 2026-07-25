@@ -7,7 +7,7 @@ RUN pip install --no-cache-dir uv
 COPY pyproject.toml ./
 RUN uv sync --no-dev
 
-COPY livekit_token.py voice_sessions.py companions.py main.py ./
+COPY livekit_token.py voice_sessions.py companions.py local_events.py checkup.py caller_memory.py main.py ./
 COPY static ./static
 
 ENV PYTHONPATH=/app

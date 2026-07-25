@@ -11,11 +11,16 @@ import uuid
 from pathlib import Path
 from typing import Optional
 
+# Resolve ``companion`` from app/companion (CLI text sub-agent package).
+_APP_DIR = Path(__file__).resolve().parent / "app"
+if str(_APP_DIR) not in sys.path:
+    sys.path.insert(0, str(_APP_DIR))
+
 import click
 import websockets
 from httpx import get
 
-from src.config import ConfigManager
+from companion.config import ConfigManager
 
 STATE_DIR = Path.home() / ".gfgpt"
 STATE_FILE = STATE_DIR / "state.json"
@@ -96,10 +101,13 @@ def start(port: Optional[int], host: Optional[str], daemon: bool):
         import subprocess
         log_file = STATE_DIR / "gateway.log"
         
-        cmd = [sys.executable, "-m", "src.gateway.gateway", "--port", str(port), "--host", host]
+        cmd = [sys.executable, "-m", "companion.gateway.gateway", "--port", str(port), "--host", host]
+        env = {**os.environ, "PYTHONPATH": str(_APP_DIR) + os.pathsep + os.environ.get("PYTHONPATH", "")}
         
         with open(log_file, 'w') as f:
-            process = subprocess.Popen(cmd, stdout=f, stderr=f, start_new_session=True)
+            process = subprocess.Popen(
+                cmd, stdout=f, stderr=f, start_new_session=True, env=env, cwd=str(_APP_DIR.parent)
+            )
         
         time.sleep(1)  # Give it time to start
         
@@ -112,7 +120,7 @@ def start(port: Optional[int], host: Optional[str], daemon: bool):
             click.echo(f"   Check logs: {log_file}", err=True)
     else:
         # Run in foreground
-        from src.gateway.gateway import run_gateway
+        from companion.gateway.gateway import run_gateway
         try:
             run_gateway(port=port, host=host)
         except KeyboardInterrupt:
@@ -300,7 +308,7 @@ def onboard():
     click.echo("\n🤖 AI Influencer Agent Onboarding\n")
     
     # Copy templates to user's folder first
-    from src.config import ConfigManager
+    from companion.config import ConfigManager
     if ConfigManager.copy_templates_to_user_dir():
         click.echo("✅ Copied templates to ~/.gfgpt/templates/")
         click.echo("   You can edit these to customize your agent")

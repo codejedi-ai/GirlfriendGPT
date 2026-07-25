@@ -3,40 +3,27 @@ import { ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import { Layout } from "@/Layout";
 import { AuthenticatedLayout } from "@/AuthenticatedLayout";
-import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { VoiceTalkProvider } from "@/contexts/VoiceTalkContext";
+import { AgentVoiceBridge } from "@/components/AgentVoiceBridge";
 import LandingPage from "@/pages/LandingPage";
 import DiscoverPage from "@/pages/DiscoverPage";
 import ProfileDetailPage from "@/pages/ProfileDetailPage";
-import LoginPage from "@/pages/LoginPage";
-import SignUpPage from "@/pages/SignUpPage";
 import MyProfilePage from "@/pages/MyProfilePage";
 import SettingsPage from "@/pages/SettingsPage";
 import TalkPage from "@/pages/TalkPage";
 import cyberpunkTheme from "@/theme/theme";
 
-/** If already signed in, skip landing auth screens. */
-function RedirectIfAuth({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
-  if (loading) return null;
-  if (user) return <Navigate to="/discover" replace />;
-  return <>{children}</>;
-}
-
-/**
- * Default UI = GirlfriendGPT (Landing + Discover shell).
- * Voice talk fills the main pane beside the sidebar (not a modal overlay).
- */
+/** Local GirlfriendGPT UI — no accounts, no sign-in. */
 function App() {
   return (
     <ThemeProvider theme={cyberpunkTheme}>
       <CssBaseline />
       <Router>
-        <AuthProvider>
+        <VoiceTalkProvider>
+          <AgentVoiceBridge />
           <Routes>
-            <Route element={<RedirectIfAuth><Layout /></RedirectIfAuth>}>
+            <Route element={<Layout />}>
               <Route path="/" element={<LandingPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/signup" element={<SignUpPage />} />
             </Route>
 
             <Route element={<AuthenticatedLayout />}>
@@ -47,9 +34,11 @@ function App() {
             </Route>
 
             <Route path="/talk" element={<TalkPage />} />
+            <Route path="/login" element={<Navigate to="/discover" replace />} />
+            <Route path="/signup" element={<Navigate to="/discover" replace />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-        </AuthProvider>
+        </VoiceTalkProvider>
       </Router>
     </ThemeProvider>
   );

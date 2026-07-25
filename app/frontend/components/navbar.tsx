@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaHeart, FaBars, FaTimes, FaSignOutAlt, FaUserCircle } from "react-icons/fa";
+import { FaHeart, FaBars, FaTimes, FaUserCircle } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi2";
-import { useAuth } from "@/contexts/AuthContext";
 import { PRODUCT_NAME, PRODUCT_STACK_LABEL } from "@/config/brand";
 
 const navLinks = [
@@ -13,8 +12,6 @@ const navLinks = [
 
 export function Navbar() {
   const location = useLocation();
-  const navigate = useNavigate();
-  const { user, signOut } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -27,11 +24,6 @@ export function Navbar() {
   useEffect(() => {
     setMobileOpen(false);
   }, [location.pathname]);
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate("/");
-  };
 
   return (
     <nav
@@ -48,10 +40,12 @@ export function Navbar() {
               <HiSparkles className="text-black text-lg" />
             </div>
             <div className="flex flex-col">
-                <span className="font-display text-base font-bold text-white tracking-wider leading-none">
-                  {PRODUCT_NAME}
-                </span>
-              <span className="text-[9px] text-[#00ffff]/60 tracking-[0.2em] font-body">{PRODUCT_STACK_LABEL}</span>
+              <span className="font-display text-base font-bold text-white tracking-wider leading-none">
+                {PRODUCT_NAME}
+              </span>
+              <span className="text-[9px] text-[#00ffff]/60 tracking-[0.2em] font-body">
+                {PRODUCT_STACK_LABEL}
+              </span>
             </div>
           </Link>
 
@@ -63,9 +57,7 @@ export function Navbar() {
                   key={link.path}
                   to={link.path}
                   className={`relative px-4 py-2 text-xs font-medium tracking-wider transition-all duration-300 font-display rounded-lg ${
-                    isActive
-                      ? "text-[#00ffff]"
-                      : "text-gray-400 hover:text-white"
+                    isActive ? "text-[#00ffff]" : "text-gray-400 hover:text-white"
                   }`}
                 >
                   {isActive && (
@@ -82,44 +74,24 @@ export function Navbar() {
           </div>
 
           <div className="hidden sm:flex items-center gap-3">
-            {user ? (
-              <>
-                <Link
-                  to="/my-profile"
-                  className={`flex items-center gap-2 px-4 py-2 border font-bold text-xs tracking-wider rounded-lg transition-all duration-300 font-display ${
-                    location.pathname === "/my-profile"
-                      ? "border-[#00ffff]/50 text-[#00ffff] bg-[#00ffff]/8"
-                      : "border-[#00ffff]/30 text-[#00ffff] hover:bg-[#00ffff]/10 hover:border-[#00ffff]"
-                  }`}
-                >
-                  <FaUserCircle className="text-sm" />
-                  PROFILE
-                </Link>
-                <button
-                  onClick={handleSignOut}
-                  className="flex items-center gap-2 px-4 py-2 border border-gray-600/50 text-gray-400 hover:text-white hover:border-gray-400 font-bold text-xs tracking-wider rounded-lg transition-all duration-300 font-display"
-                >
-                  <FaSignOutAlt className="text-[10px]" />
-                  SIGN OUT
-                </button>
-              </>
-            ) : (
-              <>
-                <Link
-                  to="/login"
-                  className="flex items-center gap-2 px-5 py-2 border border-[#00ffff]/30 text-[#00ffff] hover:bg-[#00ffff]/10 hover:border-[#00ffff] font-bold text-xs tracking-wider rounded-lg transition-all duration-300 font-display"
-                >
-                  SIGN IN
-                </Link>
-                <Link
-                  to="/signup"
-                  className="flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-[#ff0080] to-[#cc0066] text-white font-bold text-xs tracking-wider rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-[#ff0080]/20 font-display"
-                >
-                  <FaHeart className="text-[10px]" />
-                  SIGN UP
-                </Link>
-              </>
-            )}
+            <Link
+              to="/my-profile"
+              className={`flex items-center gap-2 px-4 py-2 border font-bold text-xs tracking-wider rounded-lg transition-all duration-300 font-display ${
+                location.pathname === "/my-profile"
+                  ? "border-[#00ffff]/50 text-[#00ffff] bg-[#00ffff]/8"
+                  : "border-[#00ffff]/30 text-[#00ffff] hover:bg-[#00ffff]/10 hover:border-[#00ffff]"
+              }`}
+            >
+              <FaUserCircle className="text-sm" />
+              PROFILE
+            </Link>
+            <Link
+              to="/discover"
+              className="flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-[#ff0080] to-[#cc0066] text-white font-bold text-xs tracking-wider rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-[#ff0080]/20 font-display"
+            >
+              <FaHeart className="text-[10px]" />
+              OPEN
+            </Link>
           </div>
 
           <button
@@ -158,44 +130,24 @@ export function Navbar() {
                 );
               })}
 
-              {user ? (
-                <>
-                  <Link
-                    to="/my-profile"
-                    className={`flex items-center justify-center gap-2 mt-2 px-5 py-3 border font-bold text-xs tracking-wider rounded-lg font-display transition-all ${
-                      location.pathname === "/my-profile"
-                        ? "border-[#00ffff]/50 text-[#00ffff] bg-[#00ffff]/8"
-                        : "border-[#00ffff]/30 text-[#00ffff] hover:bg-[#00ffff]/10"
-                    }`}
-                  >
-                    <FaUserCircle className="text-sm" />
-                    MY PROFILE
-                  </Link>
-                  <button
-                    onClick={handleSignOut}
-                    className="flex items-center justify-center gap-2 w-full mt-2 px-5 py-3 border border-gray-600/50 text-gray-400 hover:text-white font-bold text-xs tracking-wider rounded-lg font-display transition-all"
-                  >
-                    <FaSignOutAlt className="text-[10px]" />
-                    SIGN OUT
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link
-                    to="/login"
-                    className="flex items-center justify-center gap-2 mt-3 px-5 py-3 border border-[#00ffff]/30 text-[#00ffff] font-bold text-xs tracking-wider rounded-lg font-display"
-                  >
-                    SIGN IN
-                  </Link>
-                  <Link
-                    to="/signup"
-                    className="flex items-center justify-center gap-2 mt-2 px-5 py-3 bg-gradient-to-r from-[#ff0080] to-[#cc0066] text-white font-bold text-xs tracking-wider rounded-lg font-display"
-                  >
-                    <FaHeart className="text-[10px]" />
-                    SIGN UP
-                  </Link>
-                </>
-              )}
+              <Link
+                to="/my-profile"
+                className={`flex items-center justify-center gap-2 mt-2 px-5 py-3 border font-bold text-xs tracking-wider rounded-lg font-display transition-all ${
+                  location.pathname === "/my-profile"
+                    ? "border-[#00ffff]/50 text-[#00ffff] bg-[#00ffff]/8"
+                    : "border-[#00ffff]/30 text-[#00ffff] hover:bg-[#00ffff]/10"
+                }`}
+              >
+                <FaUserCircle className="text-sm" />
+                MY PROFILE
+              </Link>
+              <Link
+                to="/discover"
+                className="flex items-center justify-center gap-2 w-full mt-2 px-5 py-3 bg-gradient-to-r from-[#ff0080] to-[#cc0066] text-white font-bold text-xs tracking-wider rounded-lg font-display"
+              >
+                <FaHeart className="text-[10px]" />
+                OPEN
+              </Link>
             </div>
           </motion.div>
         )}

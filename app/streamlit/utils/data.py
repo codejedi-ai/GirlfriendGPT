@@ -1,7 +1,7 @@
 """Companion catalog for the optional Streamlit UI (app/streamlit).
 
 Sources (in order):
-- ``src/templates/personalities/*.json`` — classic Luna/Sandra-style templates
+- ``app/companion/templates/personalities/*.json`` — classic Luna/Sandra-style templates
 - repo ``templates/*.json`` — voice agent templates (Lena, Nia, …)
 - ``app/agent/personas/*.json`` — live voice personas
 """
@@ -30,7 +30,7 @@ RESOURCE_FILE = Path.home() / ".gfgpt" / "ui_resources.json"
 
 _UI_DIR = Path(__file__).resolve().parent  # app/streamlit/utils
 _REPO_ROOT = _UI_DIR.parents[2]  # utils → streamlit → app → GirlfriendGPT repo root
-_PERSONALITIES_DIR = _REPO_ROOT / "src" / "templates" / "personalities"
+_PERSONALITIES_DIR = _REPO_ROOT / "app" / "companion" / "templates" / "personalities"
 _TEMPLATES_DIR = _REPO_ROOT / "templates"
 _PERSONAS_DIR = _REPO_ROOT / "app" / "agent" / "personas"
 

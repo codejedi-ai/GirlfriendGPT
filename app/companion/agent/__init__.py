@@ -1,6 +1,6 @@
 """AI Influencer Agent - SmolAgent implementation.
 
-DEPRECATED: Use src.core and src.agents instead.
+DEPRECATED: Use companion.core and companion.agents instead.
 This module is kept for backward compatibility.
 """
 

@@ -1,18 +1,16 @@
 import { useEffect } from "react";
-import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { HiSparkles } from "react-icons/hi2";
 import {
   FaCompass,
   FaUserCircle,
   FaCog,
-  FaSignOutAlt,
   FaChevronLeft,
   FaChevronRight,
   FaBars,
   FaTimes,
 } from "react-icons/fa";
-import { useAuth } from "@/contexts/AuthContext";
 import { PRODUCT_NAME, PRODUCT_STACK_LABEL } from "@/config/brand";
 
 const navItems = [
@@ -29,18 +27,11 @@ interface SidebarProps {
 }
 
 export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileToggle }: SidebarProps) {
-  const { signOut } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     if (mobileOpen) onMobileToggle();
   }, [location.pathname]);
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate("/");
-  };
 
   const showText = !collapsed || mobileOpen;
 
@@ -118,16 +109,13 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileToggle }: Sid
       </nav>
 
       <div className="p-3 border-t border-[#00ffff]/8">
-        <button
-          onClick={handleSignOut}
-          title={!showText ? "Sign Out" : undefined}
-          className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-gray-500 hover:text-red-400 hover:bg-red-400/5 transition-all duration-200 ${
-            !showText ? "justify-center" : ""
+        <p
+          className={`text-[10px] tracking-wider text-gray-600 font-display ${
+            !showText ? "text-center" : "px-3"
           }`}
         >
-          <FaSignOutAlt className="text-base flex-shrink-0" />
-          {showText && <span className="font-body">Sign Out</span>}
-        </button>
+          {showText ? "LOCAL" : "LOC"}
+        </p>
       </div>
     </>
   );

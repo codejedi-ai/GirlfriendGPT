@@ -14,7 +14,7 @@ companions. ALI may orchestrate both over LiveKit; this repo’s agent JSON
 **GirlfriendGPT** hosts two agent kinds and buffers between them:
 
 1. **Voice agent** (`app/agent/`) — LiveKit worker; **produces / populates** the queue.
-2. **CLI sub-agent** (`cli.py`, `src/`) — **consumes** from the queue.
+2. **CLI sub-agent** (`cli.py`, `app/companion/`) — **consumes** from the queue.
 
 Pattern: **producer (voice) → buffer/queue → consumer (CLI)**.
 
@@ -36,7 +36,7 @@ Canonical checkout: repo-root `GirlfriendGPT/`. Layout alias:
 - Voice worker / agent JSON / **local** providers → `app/agent/`
 - Agent JSON **must** include a non-empty `packages` array (persona contract; not assumed from pyproject alone); declare local-stack deps
 - `models.provider` = local (Speaches, Ollama, …) — not AI-GF cloud APIs
-- CLI companion features → `cli.py` + `src/`
+- CLI companion features → `cli.py` + `app/companion/`
 - Shared tool defs by id → repo-root `shared/tools/<id>.json`
 - LiveKit control plane → **ALI** (`ALI/app/backend`, `ALI/app/web`)
 - Third-party Galatea companions → **AI-GF** (`agents/AI-GF`), not this repo
