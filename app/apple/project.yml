@@ -1,0 +1,44 @@
+name: GirlfriendGPT
+packages:
+  LiveKit:
+    url: https://github.com/livekit/client-sdk-swift
+    exactVersion: 2.15.2
+options:
+  bundleIdPrefix: local.girlfriendgpt
+  deploymentTarget:
+    iOS: "17.0"
+    macOS: "14.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_EMIT_LOC_STRINGS: NO
+targets:
+  GirlfriendGPT:
+    type: application
+    platform: iOS
+    supportedDestinations: [iOS, macOS]
+    sources:
+      - path: GirlfriendGPT
+    dependencies:
+      - package: LiveKit
+        product: LiveKit
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: local.girlfriendgpt.GirlfriendGPT
+        PRODUCT_NAME: GirlfriendGPT
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: GirlfriendGPT
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.lifestyle
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
+        INFOPLIST_KEY_NSMicrophoneUsageDescription: GirlfriendGPT uses the microphone so you can talk with a local companion.
+        INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsArbitraryLoads: YES
+        INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsLocalNetworking: YES
+        ENABLE_PREVIEWS: YES
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        ENABLE_APP_SANDBOX: NO
+        ENABLE_HARDENED_RUNTIME: NO
+        TARGETED_DEVICE_FAMILY: "1,2"

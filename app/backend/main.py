@@ -25,9 +25,6 @@ from typing import Any
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
-
 from checkup import checkup_loop, run_checkup_once
 from caller_memory import (
     CallerMemoryUpdate,
@@ -55,8 +52,6 @@ from voice_sessions import (
 )
 
 _BACKEND_DIR = Path(__file__).resolve().parent
-_STATIC_DIR = _BACKEND_DIR / "static"
-_AGENT_TALK_STATIC = _BACKEND_DIR.parent / "agent" / "talk" / "static"
 
 load_dotenv(_BACKEND_DIR / ".env")
 load_dotenv(_BACKEND_DIR.parent / "agent" / ".env")
@@ -90,16 +85,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-def _talk_index() -> Path | None:
-    for candidate in (
-        _STATIC_DIR / "index.html",
-        _AGENT_TALK_STATIC / "index.html",
-    ):
-        if candidate.is_file():
-            return candidate
-    return None
 
 
 @app.get("/api/health")
@@ -241,22 +226,6 @@ async def issue_token(body: TokenRequest | None = None) -> TokenResponse:
         payload.expiry_state,
     )
     return payload
-
-
-@app.get("/")
-def index() -> FileResponse:
-    path = _talk_index()
-    if path is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Talk UI missing (app/backend/static or app/agent/talk/static)",
-        )
-    return FileResponse(path)
-
-
-_static_root = _STATIC_DIR if _STATIC_DIR.is_dir() else _AGENT_TALK_STATIC
-if _static_root.is_dir():
-    app.mount("/static", StaticFiles(directory=str(_static_root)), name="static")
 
 
 def main() -> None:

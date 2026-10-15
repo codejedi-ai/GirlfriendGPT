@@ -1,0 +1,411 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		204E72544E5190D0B1E015AD /* DiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A25402320D15362B853236 /* DiscoverView.swift */; };
+		373FDE40B89D647EBD7734B7 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02511BB5BF19706CD1C6175 /* HomeView.swift */; };
+		3A824549EF66D0E1110F2DB4 /* MyProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9827E5E579373288681CB5A /* MyProfileView.swift */; };
+		499EF8A509DFE0C24C4E0071 /* GirlfriendGPTApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8C31F9309BB173F701358 /* GirlfriendGPTApp.swift */; };
+		5C3CAC7FF267DFC9096F2B41 /* TalkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA7ED32A8FCF36E49EEEF11 /* TalkView.swift */; };
+		6060AD21573D092D0ED91FAD /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD55C5FCE35D3799EA3F33B3 /* SettingsView.swift */; };
+		8AF63E20587722481B3FEA4B /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA6392A1A198F1D7293B9B /* RootView.swift */; };
+		A13BFE040AB8F97B18F4AA66 /* LiveKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4214BF2851990B97F67C7221 /* LiveKit */; };
+		A5F67ABD8EE84FB4ADD1828D /* LocalRoomSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EBCD9712B6421CB8D226CD3 /* LocalRoomSession.swift */; };
+		AD581FA2F3B0250329CA5A38 /* CompanionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1833F9725345CC8FE5B6285 /* CompanionDetailView.swift */; };
+		C6852C9563CB15C43B13A3F1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D7BA92AD8C6D3F573772CDE4 /* Assets.xcassets */; };
+		CE08D68D5BBED449F027A632 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18BCF202B6B9858B07CDE55A /* Models.swift */; };
+		EF70A8FAC2068F4E9FE8F667 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A3925CFD453D80D04A74F6F /* Theme.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		18BCF202B6B9858B07CDE55A /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		3C25E1A582D38989F7DE0E14 /* GirlfriendGPT.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = GirlfriendGPT.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4A3925CFD453D80D04A74F6F /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		5AA7ED32A8FCF36E49EEEF11 /* TalkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TalkView.swift; sourceTree = "<group>"; };
+		5EBCD9712B6421CB8D226CD3 /* LocalRoomSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalRoomSession.swift; sourceTree = "<group>"; };
+		A1833F9725345CC8FE5B6285 /* CompanionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanionDetailView.swift; sourceTree = "<group>"; };
+		B3D8C31F9309BB173F701358 /* GirlfriendGPTApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GirlfriendGPTApp.swift; sourceTree = "<group>"; };
+		BD55C5FCE35D3799EA3F33B3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		C02511BB5BF19706CD1C6175 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		D7BA92AD8C6D3F573772CDE4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D8A25402320D15362B853236 /* DiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverView.swift; sourceTree = "<group>"; };
+		D9827E5E579373288681CB5A /* MyProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileView.swift; sourceTree = "<group>"; };
+		E1EA6392A1A198F1D7293B9B /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3F408414ED578907E1D60045 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A13BFE040AB8F97B18F4AA66 /* LiveKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F13DB9DB4D2AD8BB970B1A57 = {
+			isa = PBXGroup;
+			children = (
+				F5C8F0FC42204A3CBB45CF4D /* GirlfriendGPT */,
+				FF6CA58CAEC760FEABE48CDF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F5C8F0FC42204A3CBB45CF4D /* GirlfriendGPT */ = {
+			isa = PBXGroup;
+			children = (
+				D7BA92AD8C6D3F573772CDE4 /* Assets.xcassets */,
+				A1833F9725345CC8FE5B6285 /* CompanionDetailView.swift */,
+				D8A25402320D15362B853236 /* DiscoverView.swift */,
+				B3D8C31F9309BB173F701358 /* GirlfriendGPTApp.swift */,
+				C02511BB5BF19706CD1C6175 /* HomeView.swift */,
+				5EBCD9712B6421CB8D226CD3 /* LocalRoomSession.swift */,
+				18BCF202B6B9858B07CDE55A /* Models.swift */,
+				D9827E5E579373288681CB5A /* MyProfileView.swift */,
+				E1EA6392A1A198F1D7293B9B /* RootView.swift */,
+				BD55C5FCE35D3799EA3F33B3 /* SettingsView.swift */,
+				5AA7ED32A8FCF36E49EEEF11 /* TalkView.swift */,
+				4A3925CFD453D80D04A74F6F /* Theme.swift */,
+			);
+			path = GirlfriendGPT;
+			sourceTree = "<group>";
+		};
+		FF6CA58CAEC760FEABE48CDF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3C25E1A582D38989F7DE0E14 /* GirlfriendGPT.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D8F94FF716400DF8247E1ACC /* GirlfriendGPT */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 653373D61B41BDA2A32A2D56 /* Build configuration list for PBXNativeTarget "GirlfriendGPT" */;
+			buildPhases = (
+				4EC409C88FE6773AD69E3D8A /* Sources */,
+				EDE61DF700B9D11E017DCB57 /* Resources */,
+				3F408414ED578907E1D60045 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GirlfriendGPT;
+			packageProductDependencies = (
+				4214BF2851990B97F67C7221 /* LiveKit */,
+			);
+			productName = GirlfriendGPT;
+			productReference = 3C25E1A582D38989F7DE0E14 /* GirlfriendGPT.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		349F489F121191A31F8ED235 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 33C04222E4D3330010E2AA0F /* Build configuration list for PBXProject "GirlfriendGPT" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = F13DB9DB4D2AD8BB970B1A57;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				AA10F6A8876380C5C47BF325 /* XCRemoteSwiftPackageReference "client-sdk-swift" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = FF6CA58CAEC760FEABE48CDF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D8F94FF716400DF8247E1ACC /* GirlfriendGPT */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		EDE61DF700B9D11E017DCB57 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C6852C9563CB15C43B13A3F1 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4EC409C88FE6773AD69E3D8A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AD581FA2F3B0250329CA5A38 /* CompanionDetailView.swift in Sources */,
+				204E72544E5190D0B1E015AD /* DiscoverView.swift in Sources */,
+				499EF8A509DFE0C24C4E0071 /* GirlfriendGPTApp.swift in Sources */,
+				373FDE40B89D647EBD7734B7 /* HomeView.swift in Sources */,
+				A5F67ABD8EE84FB4ADD1828D /* LocalRoomSession.swift in Sources */,
+				CE08D68D5BBED449F027A632 /* Models.swift in Sources */,
+				3A824549EF66D0E1110F2DB4 /* MyProfileView.swift in Sources */,
+				8AF63E20587722481B3FEA4B /* RootView.swift in Sources */,
+				6060AD21573D092D0ED91FAD /* SettingsView.swift in Sources */,
+				5C3CAC7FF267DFC9096F2B41 /* TalkView.swift in Sources */,
+				EF70A8FAC2068F4E9FE8F667 /* Theme.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		0EDA88DF8DA87EFFE4C2EF73 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		2F36B7480B556EB9463A643C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		A36CAF27AEEFCB2FCCA8BD70 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = GirlfriendGPT;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsArbitraryLoads = YES;
+				INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsLocalNetworking = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "GirlfriendGPT uses the microphone so you can talk with a local companion.";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = local.girlfriendgpt.GirlfriendGPT;
+				PRODUCT_NAME = GirlfriendGPT;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DE9B006197A3845440B713E4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = GirlfriendGPT;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsArbitraryLoads = YES;
+				INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsLocalNetworking = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "GirlfriendGPT uses the microphone so you can talk with a local companion.";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = local.girlfriendgpt.GirlfriendGPT;
+				PRODUCT_NAME = GirlfriendGPT;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		33C04222E4D3330010E2AA0F /* Build configuration list for PBXProject "GirlfriendGPT" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0EDA88DF8DA87EFFE4C2EF73 /* Debug */,
+				2F36B7480B556EB9463A643C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		653373D61B41BDA2A32A2D56 /* Build configuration list for PBXNativeTarget "GirlfriendGPT" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A36CAF27AEEFCB2FCCA8BD70 /* Debug */,
+				DE9B006197A3845440B713E4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AA10F6A8876380C5C47BF325 /* XCRemoteSwiftPackageReference "client-sdk-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/livekit/client-sdk-swift";
+			requirement = {
+				kind = exactVersion;
+				version = 2.15.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4214BF2851990B97F67C7221 /* LiveKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA10F6A8876380C5C47BF325 /* XCRemoteSwiftPackageReference "client-sdk-swift" */;
+			productName = LiveKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 349F489F121191A31F8ED235 /* Project object */;
+}

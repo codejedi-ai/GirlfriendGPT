@@ -1,6 +1,6 @@
 # GirlfriendGPT backend (`app/backend`)
 
-Token API for the Talk frontend. **Does not** join LiveKit rooms as the user.
+Token API for the Talk frontend. **Does not** join LiveKit rooms as the user, and **does not** serve a screen. Talk UI is `app/frontend` (`:5173`) or the Apple app.
 
 ```text
 app/frontend  --POST /api/token-->  this package  → { token, url }

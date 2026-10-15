@@ -8,7 +8,9 @@ services:
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      # Host 6379 is often taken by another Redis. LiveKit reaches this
+      # service as redis:6379 on the compose network.
+      - "6380:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s

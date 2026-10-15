@@ -36,6 +36,7 @@ Canonical checkout: repo-root `GirlfriendGPT/`. Layout alias:
 - Voice worker / agent JSON / **local** providers → `app/agent/`
 - Agent JSON **must** include a non-empty `packages` array (persona contract; not assumed from pyproject alone); declare local-stack deps
 - `models.provider` = local (Speaches, Ollama, …) — not AI-GF cloud APIs
+- Token server (`app/backend`, `:8080`) is an API only. No talk page, HTML shell, or static UI on that process. Screens belong to `app/frontend` (`:5173`) and the Apple app.
 - CLI companion features → `cli.py` + `app/companion/`
 - Shared tool defs by id → repo-root `shared/tools/<id>.json`
 - LiveKit control plane → **ALI** (`ALI/app/backend`, `ALI/app/web`)
